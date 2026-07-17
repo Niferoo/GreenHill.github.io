@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>GreenHill — Minecraft City State</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#080c0a;--bg-deep:#040605;--accent:#3DDC6F;--accent-dark:#1C8F45;--accent-bright:#54EE84;--gold:#D4B340;--white:#F0F5F2;--gray:#88918A;--gray-dim:#3F4641;--panel:#0e1410;--border:#1B2720;--border-accent:rgba(61,220,111,0.3);--radius:10px;--radius-lg:20px;--nav-h:60px;--sidebar-w:230px;--toc-w:196px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg-deep);color:var(--white);font-family:"Inter",system-ui,sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
+body::before{content:"";position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.012) 2px,rgba(0,0,0,0.012) 3px);pointer-events:none;z-index:9999;}
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(56,212,106,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(56,212,106,0.02) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0;}
+.bg-deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.bg-orb{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(56,212,106,0.08) 0%,transparent 70%);}
+.bg-orb-1{width:600px;height:600px;top:5%;left:-10%;animation:drift1 25s ease-in-out infinite;}
+.bg-orb-2{width:500px;height:500px;top:60%;right:-5%;animation:drift2 30s ease-in-out infinite;}
+.bg-orb-3{width:400px;height:400px;bottom:10%;left:30%;animation:drift1 22s ease-in-out infinite 3s;}
+.bg-ring{position:absolute;border-radius:50%;border:1px solid rgba(56,212,106,0.04);}
+.bg-ring-1{width:500px;height:500px;top:20%;left:8%;}
+.bg-ring-2{width:800px;height:800px;top:45%;right:-10%;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 64px;height:var(--nav-h);background:rgba(5,7,6,0.72);backdrop-filter:blur(20px) saturate(1.3);border-bottom:1px solid var(--border-accent);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;cursor:pointer;}
+.nav-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:"Orbitron",sans-serif;font-weight:900;font-size:18px;color:var(--bg-deep);box-shadow:0 0 20px rgba(56,212,106,0.35);}
+.nav-logo-text{font-family:"Orbitron",sans-serif;font-size:13px;font-weight:700;letter-spacing:0.15em;color:var(--white);text-transform:uppercase;line-height:1.3;}
+.nav-logo-text .sub{display:block;font-size:9px;color:var(--gray);letter-spacing:0.22em;font-weight:500;}
+.nav-links{display:flex;gap:0;list-style:none;position:absolute;left:50%;transform:translateX(-50%);}
+.nav-links a{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray);text-decoration:none;padding:6px 18px;border-radius:8px;transition:color .2s;position:relative;cursor:pointer;}
+.nav-links a::after{content:"";position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--accent);border-radius:2px;transition:width .25s ease;}
+.nav-links a:hover{color:var(--white);}
+.nav-links a:hover::after{width:12px;}
+.nav-links a.active{color:var(--accent);}
+.nav-links a.active::after{width:16px;}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-discord{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--white);text-decoration:none;padding:8px 20px;border:1px solid var(--accent);border-radius:8px;transition:all 0.2s;display:flex;align-items:center;gap:8px;background:rgba(56,212,106,0.12);box-shadow:0 0 12px rgba(56,212,106,0.15);}
+.nav-discord:hover{background:var(--accent);color:var(--bg-deep);box-shadow:0 0 24px rgba(56,212,106,0.4);}
+.burger{display:none;flex-direction:column;justify-content:center;align-items:center;width:38px;height:38px;gap:5px;cursor:pointer;background:none;border:none;padding:0;z-index:200;}
+.burger span{display:block;width:22px;height:2px;background:var(--gray);border-radius:2px;transition:transform .25s,opacity .25s,background .2s;}
+.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);background:var(--white);}
+.burger.open span:nth-child(2){opacity:0;}
+.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);background:var(--white);}
+.mobile-drawer{display:none;position:fixed;top:var(--nav-h);left:0;right:0;bottom:0;background:rgba(5,7,6,0.98);backdrop-filter:blur(20px);z-index:150;flex-direction:column;padding:24px 20px;border-top:1px solid var(--border);opacity:0;pointer-events:none;transition:opacity .22s ease;}
+.mobile-drawer.open{opacity:1;pointer-events:all;}
+.mobile-drawer ul{list-style:none;display:flex;flex-direction:column;gap:4px;}
+.mobile-drawer ul a{display:block;padding:14px 16px;font-family:"JetBrains Mono",monospace;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray);text-decoration:none;border:1px solid transparent;border-radius:var(--radius);transition:all .15s;cursor:pointer;}
+.mobile-drawer ul a:hover{color:var(--white);background:var(--panel);border-color:var(--border);}
+.mobile-drawer ul a.active{color:var(--accent);}
+.mobile-drawer-sep{height:1px;background:var(--border);margin:16px 0;}
+.page-view{display:none;}
+.page-view.active{display:block;}
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 40px 140px;overflow:hidden;isolation:isolate;}
+.hero-beams{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.hero-beams::before{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:150vmax;height:150vmax;background:conic-gradient(from 0deg,transparent 0deg,rgba(56,212,106,0.04) 40deg,transparent 80deg,transparent 160deg,rgba(56,212,106,0.03) 200deg,transparent 240deg,transparent 310deg,rgba(56,212,106,0.025) 345deg,transparent 360deg);animation:beams-spin 35s linear infinite;}
+.hero-orb{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:min(700px,110vw);height:min(700px,110vw);background:radial-gradient(circle at 50% 50%,rgba(56,212,106,0.15) 0%,rgba(56,212,106,0.05) 40%,transparent 70%);border-radius:50%;animation:orb-breathe 8s ease-in-out infinite;pointer-events:none;}
+.hero-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;}
+.hero-logo{width:90px;height:90px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border-radius:20px;margin-bottom:28px;animation:fadeUp .8s ease both,logo-pulse 6s ease-in-out infinite 1s;box-shadow:0 0 0 1px rgba(56,212,106,0.3),0 0 60px rgba(56,212,106,0.25),0 20px 50px rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;font-family:"Orbitron",sans-serif;font-weight:900;font-size:42px;color:var(--bg-deep);}
+.hero-tag{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.35em;color:var(--accent);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:16px;animation:fadeUp .8s .1s ease both;}
+.hero-tag::before,.hero-tag::after{content:"";display:block;width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--accent-dark),transparent);}
+.hero-title{font-family:"Orbitron",sans-serif;font-size:clamp(70px,13vw,140px);font-weight:900;letter-spacing:0.08em;line-height:.9;text-align:center;text-transform:uppercase;animation:fadeUp .8s .15s ease both;background:linear-gradient(135deg,var(--white) 30%,var(--accent-bright) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-subtitle{margin-top:24px;font-size:16px;color:var(--gray);text-align:center;max-width:460px;line-height:1.8;animation:fadeUp .8s .2s ease both;}
+.hero-desc{margin-top:16px;font-size:14px;color:var(--gray-dim);text-align:center;max-width:520px;line-height:1.75;animation:fadeUp .8s .25s ease both;}
+.hero-meta{margin-top:12px;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:0.25em;color:var(--gray-dim);text-transform:uppercase;animation:fadeUp .8s .28s ease both;display:flex;gap:20px;justify-content:center;}
+.hero-stats{display:flex;gap:1px;margin-top:48px;animation:fadeUp .8s .25s ease both;}
+.stat{background:var(--panel);border:1px solid var(--border);padding:18px 32px;text-align:center;position:relative;min-width:140px;}
+.stat:not(:last-child){border-right:none;}
+.stat:first-child{border-radius:var(--radius) 0 0 var(--radius);}
+.stat:last-child{border-radius:0 var(--radius) var(--radius) 0;}
+.stat::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:0;transition:opacity .2s;}
+.stat:hover::before{opacity:1;}
+.stat-icon{font-size:24px;margin-bottom:8px;}
+.stat-value{font-family:"Orbitron",sans-serif;font-size:32px;font-weight:700;color:var(--white);line-height:1;}
+.stat-label{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.12em;color:var(--gray);text-transform:uppercase;margin-top:4px;}
+.hero-cta{display:flex;gap:12px;margin-top:40px;flex-wrap:wrap;justify-content:center;animation:fadeUp .8s .3s ease both;}
+.btn{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;padding:12px 28px;border:1px solid;border-radius:var(--radius);transition:all .2s;cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--bg-deep);font-weight:600;box-shadow:0 0 28px rgba(56,212,106,0.3);}
+.btn-primary:hover{background:var(--accent-bright);border-color:var(--accent-bright);box-shadow:0 0 40px rgba(56,212,106,0.5);transform:translateY(-2px);}
+.btn-secondary{background:transparent;border-color:var(--border);color:var(--gray);}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);background:rgba(56,212,106,0.05);}
+.btn-gold{background:var(--gold);border-color:var(--gold);color:var(--bg-deep);font-weight:600;box-shadow:0 0 28px rgba(212,175,55,0.3);}
+.btn-gold:hover{background:#e6c34a;border-color:#e6c34a;box-shadow:0 0 40px rgba(212,175,55,0.5);transform:translateY(-2px);}
+section{position:relative;z-index:1;padding:80px 48px;max-width:1100px;margin:0 auto;}
+.section-header{display:flex;align-items:center;gap:24px;margin-bottom:50px;}
+.section-index{font-family:"Orbitron",sans-serif;font-size:64px;font-weight:900;color:rgba(56,212,106,0.12);letter-spacing:0.02em;line-height:1;user-select:none;flex-shrink:0;}
+.section-title-group{display:flex;flex-direction:column;gap:3px;}
+.section-label{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.25em;color:var(--accent);text-transform:uppercase;}
+.section-title{font-family:"Orbitron",sans-serif;font-size:32px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;line-height:1;}
+.section-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+.sep{max-width:1100px;margin:0 auto;padding:0 48px;position:relative;z-index:1;}
+.sep-line{height:1px;background:linear-gradient(90deg,rgba(56,212,106,0.3),var(--border) 30%,transparent 70%);}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.about-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px 34px;position:relative;transition:all .3s;overflow:hidden;}
+.about-card::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 0% 100%,rgba(56,212,106,0.08) 0%,transparent 60%);opacity:0;transition:opacity .3s;}
+.about-card:hover{border-color:var(--border-accent);background:#131915;transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,0.4);}
+.about-card:hover::after{opacity:1;}
+.card-icon{font-size:28px;margin-bottom:14px;display:block;}
+.card-title{font-family:"Orbitron",sans-serif;font-size:18px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);margin-bottom:10px;}
+.card-text{font-size:14px;color:var(--gray);line-height:1.75;}
+.greenscore-block{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:36px 40px;position:relative;overflow:hidden;}
+.greenscore-block::before{content:"";position:absolute;top:0;right:0;width:300px;height:300px;background:radial-gradient(circle at 100% 0%,rgba(56,212,106,0.1) 0%,transparent 65%);}
+.gs-intro{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:30px;flex-wrap:wrap;}
+.gs-title{font-family:"Orbitron",sans-serif;font-size:26px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);line-height:1.2;}
+.gs-desc{font-size:14px;color:var(--gray);max-width:400px;line-height:1.7;margin-top:6px;}
+.gs-levels{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.gs-level{display:flex;align-items:center;gap:14px;padding:12px 16px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:var(--radius);transition:all .2s;}
+.gs-level:hover{border-color:var(--border-accent);background:rgba(56,212,106,0.04);}
+.gs-level-num{font-family:"Orbitron",sans-serif;font-size:14px;font-weight:700;color:var(--accent);min-width:24px;}
+.gs-level-info{display:flex;flex-direction:column;gap:2px;}
+.gs-level-name{font-family:"JetBrains Mono",monospace;font-size:13px;letter-spacing:0.06em;color:var(--white);}
+.gs-level-label{font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--gray-dim);text-transform:uppercase;letter-spacing:0.12em;}
+.gs-level.gs-current{border-color:var(--accent);background:rgba(56,212,106,0.08);box-shadow:0 0 12px rgba(56,212,106,0.15);}
+.economy-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.econ-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 30px;transition:all .3s;position:relative;overflow:hidden;}
+.econ-card::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 100% 0%,rgba(212,175,55,0.06) 0%,transparent 60%);opacity:0;transition:opacity .3s;}
+.econ-card:hover{border-color:rgba(212,175,55,0.25);background:#131915;transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,0.4);}
+.econ-card:hover::after{opacity:1;}
+.econ-icon{font-size:26px;margin-bottom:12px;}
+.econ-title{font-family:"Orbitron",sans-serif;font-size:17px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);margin-bottom:8px;}
+.econ-text{font-size:13px;color:var(--gray);line-height:1.7;}
+.constitution-banner{background:var(--panel);border:1px solid var(--gold);border-radius:var(--radius-lg);padding:36px 40px;position:relative;overflow:hidden;}
+.constitution-banner::before{content:"";position:absolute;top:0;right:0;width:400px;height:400px;background:radial-gradient(circle at 100% 0%,rgba(212,175,55,0.08) 0%,transparent 65%);}
+.constitution-title{font-family:"Orbitron",sans-serif;font-size:24px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--white);margin-bottom:6px;}
+.constitution-subtitle{font-size:14px;color:var(--gray);margin-bottom:24px;max-width:500px;line-height:1.7;}
+.constitution-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;}
+.constitution-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:var(--radius);font-size:14px;color:var(--gray);transition:all .2s;}
+.constitution-item:hover{border-color:rgba(212,175,55,0.3);}
+.constitution-item-icon{font-size:20px;}
+.projects-list{display:flex;flex-direction:column;gap:18px;}
+.project-card{display:flex;flex-direction:row;min-height:300px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:all .3s;}
+.project-card:hover{border-color:var(--border-accent);box-shadow:0 16px 48px rgba(0,0,0,0.4);}
+.project-img{flex:7;position:relative;overflow:hidden;background:var(--bg-deep);min-height:280px;cursor:pointer;}
+.project-img-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:repeating-linear-gradient(45deg,var(--bg-deep) 0px,var(--bg-deep) 12px,#0c100e 12px,#0c100e 24px);color:var(--gray-dim);font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;}
+.gallery-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s ease;z-index:1;cursor:pointer;}
+.gallery-img.active{opacity:1;}
+.gallery-btn{position:absolute;top:50%;transform:translateY(-50%);z-index:3;background:rgba(0,0,0,0.55);color:var(--white);border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s,background .2s;user-select:none;}
+.project-img:hover .gallery-btn{opacity:1;}
+.gallery-btn:hover{background:rgba(0,0,0,0.85);}
+.gallery-prev{left:10px;}
+.gallery-next{right:10px;}
+.gallery-dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:3;}
+.gallery-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.35);cursor:pointer;transition:background .2s;}
+.gallery-dot.active{background:var(--white);}
+.project-body{flex:3;padding:22px 28px;display:flex;flex-direction:column;gap:10px;order:-1;}
+.g-modal{display:none;position:fixed;inset:0;z-index:2000;align-items:center;justify-content:center;}
+.g-modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);}
+.g-modal-inner{position:relative;width:65vw;max-width:1100px;max-height:85vh;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;}
+.g-modal-close{position:absolute;top:12px;right:12px;z-index:10;background:rgba(0,0,0,0.5);border:none;color:var(--white);font-size:22px;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:.8;transition:opacity .15s;}
+.g-modal-close:hover{opacity:1;background:rgba(0,0,0,0.8);}
+.g-modal-layout{display:flex;flex:1;min-height:380px;}
+.g-modal-info{flex:3;padding:28px 32px;display:flex;flex-direction:column;gap:10px;border-right:1px solid var(--border);overflow-y:auto;}
+.g-modal-info .project-tag{margin-bottom:2px;}
+.g-modal-info .project-title{font-size:17px;}
+.g-modal-info .project-desc{flex:none;}
+.g-modal-visual{flex:7;position:relative;display:flex;align-items:center;justify-content:center;background:var(--bg-deep);min-height:300px;}
+.g-modal-img{max-width:100%;max-height:100%;object-fit:contain;}
+.g-modal-prev,.g-modal-next{position:absolute;top:50%;transform:translateY(-50%);z-index:5;background:rgba(0,0,0,0.5);color:var(--white);border:1px solid rgba(255,255,255,0.1);width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;transition:background .15s;opacity:0;}
+.g-modal-visual:hover .g-modal-prev,.g-modal-visual:hover .g-modal-next{opacity:0.8;}
+.g-modal-prev:hover,.g-modal-next:hover{background:rgba(0,0,0,0.8);opacity:1!important;}
+.g-modal-prev{left:10px;}
+.g-modal-next{right:10px;}
+.g-modal-dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5;}
+.g-modal-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.35);cursor:pointer;transition:background .2s;}
+.g-modal-dot.active{background:var(--white);}
+.project-tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;padding:3px 9px;border-radius:4px;border:1px solid;width:fit-content;}
+.project-tag.active{color:var(--accent);border-color:var(--accent);background:rgba(61,220,111,0.08);}
+.project-tag.planned{color:var(--gold);border-color:rgba(212,179,64,0.4);background:rgba(212,179,64,0.06);}
+.project-tag.completed{color:var(--accent-dark);border-color:var(--accent);background:rgba(61,220,111,0.1);}
+.project-tag.wip{color:var(--gold);border-color:var(--gold);background:rgba(212,179,64,0.08);}
+.project-title{font-family:"Orbitron",sans-serif;font-size:18px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--white);margin-bottom:4px;}
+.project-desc{font-size:13px;color:var(--gray);line-height:1.65;flex:1;}
+.join-block{background:var(--panel);border:1px solid var(--border-accent);border-radius:var(--radius-lg);padding:36px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;position:relative;overflow:hidden;}
+.join-block::before{content:"";position:absolute;top:0;right:0;width:400px;height:400px;background:radial-gradient(circle at 100% 0%,rgba(56,212,106,0.1) 0%,transparent 65%);}
+.join-title{font-family:"Orbitron",sans-serif;font-size:26px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--white);}
+.join-desc{font-size:14px;color:var(--gray);margin-top:6px;max-width:380px;line-height:1.7;}
+.join-btns{display:flex;gap:10px;flex-wrap:wrap;flex-shrink:0;}
+#page-roadmap{padding-top:var(--nav-h);}
+#page-404{padding-top:var(--nav-h);}
+.p404-wrap{min-height:calc(100vh - var(--nav-h));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;position:relative;z-index:1;}
+.p404-code{font-family:"Orbitron",sans-serif;font-size:clamp(120px,20vw,220px);font-weight:900;line-height:.85;letter-spacing:0.04em;color:var(--white);text-shadow:0 0 80px rgba(56,212,106,0.2);}
+.p404-code .r{color:var(--accent);text-shadow:0 0 60px rgba(56,212,106,0.45);}
+.p404-status{font-family:"JetBrains Mono",monospace;font-size:13px;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-top:18px;display:flex;align-items:center;gap:14px;}
+.p404-status::before,.p404-status::after{content:"";display:block;height:1px;background:var(--accent-dark);}
+.p404-desc{font-size:14px;color:var(--gray);margin-top:16px;max-width:340px;line-height:1.75;}
+.p404-back{margin-top:32px;}
+#page-404.anim .p404-code{animation:p404-drop .7s cubic-bezier(0.16,1,0.3,1) .05s both,p404-glitch 5s ease-in-out 2s infinite;}
+#page-404.anim .p404-code .r{animation:p404-flicker 6s ease-in-out 2.5s infinite;}
+#page-404.anim .p404-status{animation:p404-up .6s ease .55s both;}
+#page-404.anim .p404-desc{animation:p404-up .6s ease .75s both;}
+#page-404.anim .p404-back{animation:p404-up .6s ease .95s both;}
+@keyframes p404-drop{from{opacity:0;transform:translateY(-40px) scale(1.08);}to{opacity:1;transform:none;}}
+@keyframes p404-up{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+@keyframes p404-glitch{0%,88%,100%{transform:none;filter:none;}89%{transform:translateX(-5px) skewX(-2deg);filter:brightness(1.2);}90%{transform:translateX(5px) skewX(2deg);}91%{transform:translateX(-3px);}92%{transform:none;}93%{transform:translateX(3px) skewX(-1deg);filter:brightness(1.15);}94%,100%{transform:none;}}
+@keyframes p404-flicker{0%,85%,100%{opacity:1;text-shadow:0 0 60px rgba(56,212,106,0.45);}86%{opacity:0.4;text-shadow:0 0 20px rgba(56,212,106,0.2);}87%{opacity:1;text-shadow:0 0 80px rgba(56,212,106,0.8);}88%{opacity:0.6;}89%,100%{opacity:1;text-shadow:0 0 60px rgba(56,212,106,0.45);}}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s,transform .8s;}
+.reveal.visible{opacity:1;transform:none;}
+.rm-page{max-width:860px;margin:0 auto;padding:3rem 2rem 6rem;}
+.rm-section-label{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.3em;color:var(--accent);text-transform:uppercase;margin-bottom:6px;}
+.rm-title{font-family:"Orbitron",sans-serif;font-size:clamp(1.6rem,4vw,2.8rem);letter-spacing:0.1em;color:var(--white);text-transform:uppercase;font-weight:700;margin-bottom:6px;}
+.rm-subtitle{color:var(--gray);font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.08em;margin-bottom:2.5rem;}
+.rm-stats-row{display:flex;gap:1px;margin-bottom:2.5rem;}
+.rm-stat-card{background:var(--panel);border:1px solid var(--border);padding:1rem 1.5rem;flex:1;min-width:120px;}
+.rm-stat-card:first-child{border-radius:var(--radius) 0 0 var(--radius);}
+.rm-stat-card:last-child{border-radius:0 var(--radius) var(--radius) 0;}
+.rm-stat-card:not(:last-child){border-right:none;}
+.rm-stat-value{font-family:"Orbitron",sans-serif;font-size:2rem;letter-spacing:0.05em;line-height:1;margin-bottom:4px;font-weight:700;}
+.rm-stat-value.green{color:var(--accent);}
+.rm-stat-value.gold{color:var(--gold);}
+.rm-stat-value.muted{color:var(--gray);}
+.rm-stat-label{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:0.2em;color:var(--gray-dim);text-transform:uppercase;}
+.rm-progress-section{margin-bottom:2.5rem;}
+.rm-progress-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.6rem;}
+.rm-progress-title{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.2em;color:var(--gray-dim);text-transform:uppercase;}
+.rm-progress-pct{font-family:"Orbitron",sans-serif;font-size:1.2rem;letter-spacing:0.1em;color:var(--accent);text-shadow:0 0 12px rgba(56,212,106,0.55);}
+.rm-progress-track{height:6px;background:var(--panel);border:1px solid var(--border);position:relative;overflow:visible;border-radius:3px;}
+.rm-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent-dark),var(--accent));transition:width 1s cubic-bezier(.4,0,.2,1);position:relative;border-radius:3px;box-shadow:0 0 6px rgba(56,212,106,0.5),0 0 18px rgba(56,212,106,0.25);}
+.rm-progress-fill::after{content:"";position:absolute;right:0;top:50%;transform:translateY(-50%);height:200%;width:3px;background:rgba(180,255,210,0.85);border-radius:2px;filter:blur(2px);animation:rm-tip-pulse 1.6s ease-in-out infinite alternate;}
+@keyframes rm-tip-pulse{from{opacity:0.5}to{opacity:1;box-shadow:0 0 12px rgba(56,212,106,0.9);}}
+.rm-segments-track{display:flex;gap:3px;margin-top:8px;}
+.rm-seg{flex:1;height:3px;background:var(--border);border-radius:2px;transition:background .4s,box-shadow .4s;}
+.rm-seg.done{background:var(--accent);box-shadow:0 0 4px rgba(56,212,106,0.6),0 0 10px rgba(56,212,106,0.25);}
+.rm-timeline{position:relative;padding-left:2px;}
+.rm-timeline-spine{position:absolute;left:20px;top:0;bottom:0;width:1px;background:var(--border);z-index:0;}
+.rm-timeline-spine-fill{position:absolute;left:0;top:0;width:100%;background:linear-gradient(to bottom,var(--accent-dark),var(--accent));transition:height 1.2s cubic-bezier(.4,0,.2,1);box-shadow:0 0 6px rgba(56,212,106,0.5),0 0 20px rgba(56,212,106,0.2);border-radius:1px;}
+.rm-step{display:flex;align-items:flex-start;gap:1.2rem;position:relative;z-index:1;margin-bottom:0;opacity:0;transform:translateX(-12px);animation:rm-step-in .4s forwards;}
+@keyframes rm-step-in{to{opacity:1;transform:translateX(0);}}
+.rm-step-dot-wrap{width:40px;flex-shrink:0;display:flex;justify-content:center;padding-top:18px;}
+.rm-step-dot{width:14px;height:14px;border:2px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;transition:border-color .3s,box-shadow .3s;flex-shrink:0;}
+.rm-step-dot.done{border-color:var(--accent);background:#0d2013;box-shadow:0 0 8px rgba(56,212,106,0.55),0 0 18px rgba(56,212,106,0.20);}
+.rm-step-dot-inner{width:6px;height:6px;background:var(--gray-dim);}
+.rm-step-dot.done .rm-step-dot-inner{background:var(--accent);box-shadow:0 0 4px rgba(56,212,106,0.8);}
+.rm-step-body{flex:1;border:1px solid var(--border);background:var(--panel);padding:1rem 1.2rem;transition:border-color .3s,background .3s;margin:8px 0;border-radius:var(--radius);}
+.rm-step.done-step .rm-step-body{border-color:#1a3d2a;background:#0d2013;}
+.rm-step-header{display:flex;justify-content:space-between;align-items:center;gap:1rem;}
+.rm-step-index{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.2em;color:var(--gray-dim);}
+.rm-step-name{font-family:"Orbitron",sans-serif;font-size:14px;letter-spacing:0.06em;color:var(--white);flex:1;}
+.rm-step-badge{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:0.2em;padding:2px 8px;text-transform:uppercase;border:1px solid;white-space:nowrap;border-radius:4px;}
+.badge-done{color:var(--accent);border-color:var(--accent);background:rgba(56,212,106,0.08);}
+.badge-wip{color:var(--gold);border-color:var(--gold);background:rgba(212,175,55,0.08);}
+.badge-pending{color:var(--gray-dim);border-color:var(--gray-dim);background:transparent;}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:2rem 3rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;max-width:1100px;margin:0 auto;}
+.footer-logo{font-family:"Orbitron",sans-serif;font-size:14px;font-weight:700;letter-spacing:0.15em;color:var(--gray-dim);display:flex;align-items:center;gap:10px;text-transform:uppercase;}
+.footer-logo .accent{color:var(--accent);opacity:0.6;}
+.footer-logo .sub{display:block;font-size:9px;letter-spacing:0.2em;color:var(--gray-dim);}
+.footer-links{display:flex;gap:24px;list-style:none;}
+.footer-links a{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.1em;color:var(--gray-dim);text-decoration:none;text-transform:uppercase;transition:color .2s;cursor:pointer;}
+.footer-links a:hover{color:var(--gray);}
+.footer-copy{font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--gray-dim);letter-spacing:0.08em;}
+.status-bar{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(5,7,6,0.92);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;align-items:center;gap:20px;padding:5px 48px;font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:0.1em;color:var(--gray-dim);}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;margin-right:5px;box-shadow:0 0 7px var(--accent);animation:pulse 2.5s ease-in-out infinite;}
+.status-item{display:flex;align-items:center;gap:3px;}
+.status-sep{width:1px;height:10px;background:var(--border);}
+.ticker{overflow:hidden;white-space:nowrap;flex:1;}
+.ticker-inner{display:inline-block;animation:ticker 40s linear infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes ticker{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes beams-spin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes orb-breathe{0%,100%{transform:translate(-50%,-55%) scale(1);opacity:1}50%{transform:translate(-50%,-55%) scale(1.15);opacity:0.7}}
+@keyframes logo-pulse{0%,100%{box-shadow:0 0 0 1px rgba(56,212,106,0.3),0 0 60px rgba(56,212,106,0.25),0 20px 50px rgba(0,0,0,0.6)}50%{box-shadow:0 0 0 1px rgba(56,212,106,0.5),0 0 90px rgba(56,212,106,0.4),0 20px 50px rgba(0,0,0,0.6)}}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-35px,40px)}}
+.wiki-sb-link.active{color:var(--accent)!important;border-left:2px solid var(--accent);background:rgba(56,212,106,0.04);}
+.wiki-sb-link:hover{color:var(--white)!important;}
+@media(max-width:768px){
+nav{padding:0 16px;}.nav-links,.nav-discord{display:none;}.burger{display:flex;}.mobile-drawer{display:flex;}
+section{padding:60px 16px;}.sep{padding:0 16px;}
+.hero{padding:100px 16px 120px;}.hero-logo{width:76px;height:76px;border-radius:16px;font-size:34px;}
+.hero-title{font-size:clamp(52px,14vw,90px);}
+.hero-stats{flex-direction:column;gap:1px;width:100%;max-width:280px;}.stat:first-child{border-radius:var(--radius) var(--radius) 0 0;border-right:1px solid var(--border);border-bottom:none;}.stat:last-child{border-radius:0 0 var(--radius) var(--radius);}
+.hero-cta{flex-direction:column;align-items:stretch;width:100%;max-width:280px;}.btn{justify-content:center;}
+.about-grid,.economy-grid,.gs-levels,.constitution-list{grid-template-columns:1fr;}
+.project-card{flex-direction:column;min-height:360px;}.project-img{min-height:200px;}.project-body{order:0;padding:18px;}
+.join-block{flex-direction:column;padding:24px 20px;}.join-btns{flex-direction:column;width:100%;}
+footer{flex-direction:column;align-items:flex-start;gap:14px;padding:1.5rem 1rem;}.footer-links{flex-wrap:wrap;gap:12px;}
+.status-bar{padding:5px 16px;gap:12px;}
+.section-index{font-size:48px;}.section-title{font-size:26px;}
+.rm-page{padding:2rem 1rem 4rem;}.rm-stats-row{flex-direction:column;gap:1px;}
+}
+@media(max-width:480px){.hero-meta{flex-direction:column;gap:6px;align-items:center;}}
+</style>
+</head>
+<body><div class="grid-bg"></div>
+<div class="bg-deco">
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+  <div class="bg-ring bg-ring-1"></div>
+  <div class="bg-ring bg-ring-2"></div>
+</div>
+
+<nav>
+  <a class="nav-logo" data-page="home">
+    <div class="nav-logo-icon">G</div>
+    <div class="nav-logo-text">GREENHILL<span class="sub">CITY STATE</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a data-page="home" class="active">Главная</a></li>
+    <li><a data-page="wiki">Вики</a></li>
+    <li><a data-page="roadmap">Роудмап</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="https://discord.gg/4MW6U8GQdH" class="nav-discord" target="_blank">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Discord
+    </a>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="mobile-drawer" id="mobile-drawer">
+  <ul>
+    <li><a data-page="home" class="active">Главная</a></li>
+    <li><a data-page="wiki">Вики</a></li>
+    <li><a data-page="roadmap">Роудмап</a></li>
+  </ul>
+  <div class="mobile-drawer-sep"></div>
+  <a href="https://discord.gg/4MW6U8GQdH" class="mobile-drawer-discord" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:rgba(56,212,106,0.12);border:1px solid var(--accent);border-radius:var(--radius);color:var(--white);text-decoration:none;font-family:JetBrains Mono,monospace;font-size:13px;letter-spacing:0.08em;font-weight:500;box-shadow:0 0 12px rgba(56,212,106,0.15);">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Discord
+  </a>
+</div>
+
+<div id="page-home" class="page-view active">
+
+<div class="hero">
+  <div class="hero-beams"></div>
+  <div class="hero-orb"></div>
+  <div class="hero-content">
+    <div class="hero-logo">G</div>
+    <div class="hero-tag">11.08.2024 · MINECRAFT CITY STATE</div>
+    <h1 class="hero-title">GREENHILL</h1>
+    <p class="hero-subtitle">Город, где развитие создаётся жителями</p>
+    <p class="hero-desc">GreenHill — независимый Minecraft город-государство, построенный на принципах сотрудничества, экономики, порядка и развития сообщества.</p>
+    <div class="hero-meta">
+      <span>ОСНОВАН 11.08.2024</span>
+      <span>GREENCORE SYSTEM ACTIVE</span>
+      <span>COMMUNITY FIRST</span>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-icon">⏳</div><div class="stat-value">2 года</div><div class="stat-label">Существуем</div></div>
+      <div class="stat"><div class="stat-icon">👥</div><div class="stat-value">30+</div><div class="stat-label">Участников</div></div>
+      <div class="stat"><div class="stat-icon">🌿</div><div class="stat-value">GS</div><div class="stat-label">Система Leaves</div></div>
+    </div>
+    <div class="hero-cta">
+      <a class="btn btn-primary" data-page="join">Вступить в GreenHill</a>
+      <a href="#" class="btn btn-secondary" target="_blank">Открыть Discord</a>
+    </div>
+  </div>
+</div>
+
+<div class="sep"><div class="sep-line"></div></div>
+
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-index">01</span>
+    <div class="section-title-group">
+      <div class="section-label">CITY</div>
+      <h2 class="section-title">About GreenHill</h2>
+    </div>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid reveal">
+    <div class="about-card"><span class="card-icon">🏛</span><h3 class="card-title">Иерархия</h3><p class="card-text">Понятная система ролей и званий. Каждый новичок с первого дня знает свою позицию и путь развития в городе.</p></div>
+    <div class="about-card"><span class="card-icon">🌿</span><h3 class="card-title">GreenScore</h3><p class="card-text">Система репутации жителей. Чем больше вклад в развитие города — тем больше возможностей и привилегий.</p></div>
+    <div class="about-card"><span class="card-icon">💬</span><h3 class="card-title">Discord</h3><p class="card-text">Активно развивающийся Discord-сервер. Общение, координация проектов, ивенты и новости города — всё в одном месте.</p></div>
+    <div class="about-card"><span class="card-icon">⚡</span><h3 class="card-title">Тестовый сервер</h3><p class="card-text">Собственный тестовый сервер для построек. Планируй и строй проекты перед переносом на основную карту.</p></div>
+  </div>
+</section>
+
+<div class="sep"><div class="sep-line"></div></div>
+
+<section id="projects">
+  <div class="section-header reveal">
+    <span class="section-index">02</span>
+    <div class="section-title-group">
+      <div class="section-label">DEVELOPMENT</div>
+      <h2 class="section-title">Проекты</h2>
+    </div>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-list reveal">
+    <div class="project-card">
+      <div class="project-img" data-images='["img/goldfarm.png","img/goldfarm.png_2.png","img/goldfarm.png_3.png"]'>
+        <img src="img/goldfarm.png" alt="Общественная ферма золота" class="gallery-img active" onerror="this.parentNode.querySelector('.project-img-placeholder').style.display='flex'">
+        <img src="img/goldfarm.png_2.png" alt="Общественная ферма золота" class="gallery-img" onerror="this.style.display='none'">
+        <img src="img/goldfarm.png_3.png" alt="Общественная ферма золота" class="gallery-img" onerror="this.style.display='none'">
+        <div class="project-img-placeholder" style="display:none;">🏗 Ферма золота</div>
+        <button class="gallery-btn gallery-prev">‹</button>
+        <button class="gallery-btn gallery-next">›</button>
+        <div class="gallery-dots"><span class="gallery-dot active"></span><span class="gallery-dot"></span><span class="gallery-dot"></span></div>
+      </div>
+      <div class="project-body">
+        <span class="project-tag completed">COMPLETED</span>
+        <div class="project-title">🏗 Общественная ферма золота Neco Vanilla V</div>
+        <p class="project-desc">Автоматическая ферма золота на базе порталов Нижнего мира, обеспечивающая город и жителей стабильным доходом ресурсов для экономики и развития.</p>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-img" data-images='["img/nether_hub.png"]'>
+        <img src="img/nether_hub.png" alt="Neco Vanilla V — Адский хаб" class="gallery-img active" onerror="this.parentNode.querySelector('.project-img-placeholder').style.display='flex'">
+        <div class="project-img-placeholder" style="display:none;">🔥 Адский хаб</div>
+        <button class="gallery-btn gallery-prev" style="display:none;">‹</button>
+        <button class="gallery-btn gallery-next" style="display:none;">›</button>
+        <div class="gallery-dots"></div>
+      </div>
+      <div class="project-body">
+        <span class="project-tag completed">COMPLETED</span>
+        <div class="project-title">🔥 Neco Vanilla V — Адский хаб</div>
+        <p class="project-desc">Центральный хаб Нижнего мира, объединяющий порталы и транспортные маршруты GreenHill и союзных городов. Совместный проект <strong style="color:var(--accent);">GreenHill × ОКУЛУС</strong>.</p>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-img">
+        <div class="project-img-placeholder">⚙ Комплекс с 40+ фермами</div>
+      </div>
+      <div class="project-body">
+        <span class="project-tag completed">COMPLETED</span>
+        <div class="project-title">⚙ Комплекс с 40+ фермами</div>
+        <p class="project-desc">Гигантский комплекс автоматических ферм, покрывающий все потребности города. Включает фермы мобов, растений, руд и редких материалов.</p>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-img" data-images='["img/gh_city.png","img/gh_city_1.png","img/gh_city_2.png"]'>
+        <img src="img/gh_city.png" alt="Город GreenHill" class="gallery-img active" onerror="this.parentNode.querySelector('.project-img-placeholder').style.display='flex'">
+        <img src="img/gh_city_1.png" alt="Город GreenHill" class="gallery-img" onerror="this.style.display='none'">
+        <img src="img/gh_city_2.png" alt="Город GreenHill" class="gallery-img" onerror="this.style.display='none'">
+        <div class="project-img-placeholder" style="display:none;">🏙 Город GreenHill</div>
+        <button class="gallery-btn gallery-prev">‹</button>
+        <button class="gallery-btn gallery-next">›</button>
+        <div class="gallery-dots"><span class="gallery-dot active"></span><span class="gallery-dot"></span><span class="gallery-dot"></span></div>
+      </div>
+      <div class="project-body">
+        <span class="project-tag completed">COMPLETED</span>
+        <div class="project-title">🏙 Город GreenHill</div>
+        <p class="project-desc">Центральный город-государство — главная площадь, административные здания, жилые кварталы и парки. Сердце и лицо сообщества.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"><div class="sep-line"></div></div>
+
+<section id="page-events">
+  <div class="section-header reveal">
+    <span class="section-index">03</span>
+    <div class="section-title-group">
+      <div class="section-label">EVENTS</div>
+      <h2 class="section-title">Ивенты</h2>
+    </div>
+    <div class="section-line"></div>
+  </div>
+  <div style="background:var(--panel);border:1px dashed var(--border);border-radius:var(--radius-lg);padding:60px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;" class="reveal">
+    <span style="font-size:56px;margin-bottom:14px;opacity:0.3;">🎪</span>
+    <p style="font-family:JetBrains Mono,monospace;font-size:14px;color:var(--gray-dim);letter-spacing:0.08em;text-transform:uppercase;">ИВЕНТЫ ПОКА НЕ ПРОВОДИЛИСЬ</p>
+    <p style="font-size:14px;color:var(--gray-dim);margin-top:8px;">Следите за анонсами в Discord</p>
+  </div>
+</section>
+
+<div class="sep"><div class="sep-line"></div></div>
+
+<section id="greenscore">
+  <div class="section-header reveal">
+    <span class="section-index">04</span>
+    <div class="section-title-group">
+      <div class="section-label">SYSTEM</div>
+      <h2 class="section-title">GreenScore</h2>
+    </div>
+    <div class="section-line"></div>
+  </div>
+  <div class="greenscore-block reveal">
+    <div class="gs-intro">
+      <div>
+        <div class="gs-title">GREEN SCORE</div>
+        <div class="gs-title" style="font-size:14px;color:var(--accent);font-family:JetBrains Mono,monospace;letter-spacing:0.15em;margin-top:4px;">PUBLIC REPUTATION SYSTEM</div>
+      </div>
+      <p class="gs-desc">GreenScore показывает вклад жителя в развитие GreenHill. Участвуй в проектах, строй, торгуй и повышай свой уровень.</p>
+    </div>
+    <div class="gs-levels" style="grid-template-columns:1fr;">
+      <div class="gs-level"><div class="gs-level-num">I</div><div class="gs-level-info"><div class="gs-level-name">Resident Trial</div><div class="gs-level-label">Новый житель</div></div></div>
+      <div class="gs-level"><div class="gs-level-num">II</div><div class="gs-level-info"><div class="gs-level-name">Resident</div><div class="gs-level-label">Полноправный житель</div></div></div>
+      <div class="gs-level gs-current"><div class="gs-level-num">III</div><div class="gs-level-info"><div class="gs-level-name">Trusted Resident</div><div class="gs-level-label">Доверенный житель</div></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"><div class="sep-line"></div></div>
+
+<section id="structures">
+  <div class="section-header reveal">
+    <span class="section-index">05</span>
+    <div class="section-title-group">
+      <div class="section-label">STRUCTURES</div>
+      <h2 class="section-title">Структуры</h2>
+    </div>
+    <div class="section-line"></div>
+  </div>
+  <div class="economy-grid reveal">
+    <div class="econ-card"><span class="econ-icon">🏦</span><h3 class="econ-title">Банк GreenHill</h3><p class="econ-text">Финансовая система города. Кредиты, вклады и экономическая поддержка жителей. Надёжное хранение ресурсов.</p></div>
+    <div class="econ-card"><span class="econ-icon">📰</span><h3 class="econ-title">СМИ GreenHill</h3><p class="econ-text">Городские новости, анонсы ивентов и освещение событий. Держим жителей в курсе всего происходящего.</p></div>
+    <div class="econ-card"><span class="econ-icon">⚖️</span><h3 class="econ-title">Совет города</h3><p class="econ-text">Административный орган управления. Принимает решения по развитию, бюджету и стратегии GreenHill.</p></div>
+    <div class="econ-card"><span class="econ-icon">🛠</span><h3 class="econ-title">Стройотряд</h3><p class="econ-text">Команда строителей, отвечающая за инфраструктуру, дороги и ключевые проекты города.</p></div>
+  </div>
+</section>
+
+<section id="join">
+  <div class="section-header reveal">
+    <span class="section-index">06</span>
+    <div class="section-title-group">
+      <div class="section-label">COMMUNITY</div>
+      <h2 class="section-title">Присоединиться</h2>
+    </div>
+    <div class="section-line"></div>
+  </div>
+  <div class="join-block reveal">
+    <div>
+      <div class="join-title">Стань частью города будущего</div>
+      <div class="join-desc">Развивай город, создавай проекты и получай новые возможности. GreenHill ждёт своих жителей.</div>
+    </div>
+    <div class="join-btns">
+      <a href="#" class="btn btn-primary">Подать заявку</a>
+      <a href="#" class="btn btn-secondary" target="_blank">Discord →</a>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div id="page-wiki" class="page-view" style="padding-top:var(--nav-h);">
+<div class="wiki-wrap" style="max-width:1200px;margin:0 auto;padding:0 48px;">
+<div class="wiki-layout" style="display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - var(--nav-h));">
+<aside class="wiki-sidebar" style="border-right:1px solid var(--border);padding:24px 0;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto;">
+  <div style="font-family:JetBrains Mono,monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gray-dim);padding:6px 20px 10px;">ВИКИ GREENHILL</div>
+  <ul style="list-style:none;display:flex;flex-direction:column;">
+    <li><a class="wiki-sb-link active" data-wikitab="constitution" style="display:block;padding:8px 20px;color:var(--gray);text-decoration:none;font-size:14px;transition:all .12s;cursor:pointer;position:relative;">📜 Конституция</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="roles" style="display:block;padding:8px 20px;color:var(--gray);text-decoration:none;font-size:14px;transition:all .12s;cursor:pointer;position:relative;">🏷️ Роли</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="greenscore" style="display:block;padding:8px 20px;color:var(--gray);text-decoration:none;font-size:14px;transition:all .12s;cursor:pointer;position:relative;">🌿 GreenScore</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="administration" style="display:block;padding:8px 20px;color:var(--gray);text-decoration:none;font-size:14px;transition:all .12s;cursor:pointer;position:relative;">🏛 Администрация</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="structures" style="display:block;padding:8px 20px;color:var(--gray);text-decoration:none;font-size:14px;transition:all .12s;cursor:pointer;position:relative;">⚙️ Структуры</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="structure-bank" style="display:block;padding:6px 20px 6px 36px;color:var(--gray-dim);text-decoration:none;font-size:13px;transition:all .12s;cursor:pointer;position:relative;">🏦 Банк</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="structure-church" style="display:block;padding:6px 20px 6px 36px;color:var(--gray-dim);text-decoration:none;font-size:13px;transition:all .12s;cursor:pointer;position:relative;">⛪ Церковь</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="structure-media" style="display:block;padding:6px 20px 6px 36px;color:var(--gray-dim);text-decoration:none;font-size:13px;transition:all .12s;cursor:pointer;position:relative;">📰 СМИ</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="events" style="display:block;padding:8px 20px;color:var(--gray);text-decoration:none;font-size:14px;transition:all .12s;cursor:pointer;position:relative;">🎪 Ивенты</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="lore" style="display:block;padding:8px 20px;color:var(--gray);text-decoration:none;font-size:14px;transition:all .12s;cursor:pointer;position:relative;">⛪ Лор</a></li>
+  </ul>
+</aside>
+<main class="wiki-content" style="padding:36px 48px;min-width:0;">
+  <div class="wiki-tab" id="wikitab-constitution" style="display:block;">
+    <div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--gray-dim);margin-bottom:20px;display:flex;align-items:center;gap:5px;letter-spacing:0.05em;"><a data-page="home" style="color:var(--gray-dim);text-decoration:none;cursor:pointer;">GreenHill</a> › <span style="color:var(--gray);">Конституция</span></div>
+    <div class="wiki-text">
+      <h1 style="font-family:Orbitron,sans-serif;font-size:26px;font-weight:700;color:var(--white);padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:24px;text-transform:uppercase;letter-spacing:0.04em;">📜 Конституция GreenHill</h1>
+
+      <h2 style="font-family:Orbitron,sans-serif;font-size:20px;font-weight:600;color:var(--white);margin:28px 0 10px;letter-spacing:0.03em;">Экономическая часть</h2>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 1.1: Экономическая деятельность</strong><br>Все виды экономической деятельности на территории города, включая торговлю и производство, должны быть зарегистрированы и лицензированы. Лицензия предоставляется бесплатно. Незаконная коммерческая деятельность строго запрещена.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 1.2: Налогообложение частных магазинов</strong><br>Каждый гражданин, открывающий частный магазин и использующий городские фермы или инфраструктуру, обязан вести учет доходов и предоставлять его по запросу городских властей.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 1.3: Налогообложение использования городских ресурсов</strong><br>Граждане, продающие ресурсы, полученные с городских ферм и общественных объектов, обязаны уплатить подоходный налог в размере 30% от полученного дохода.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 1.4: Налогообложение собственных структур</strong><br>Доходы, полученные гражданами с личных ферм, магазинов и иных частных структур, расположенных на территории города, облагаются налогом в размере 10% от дохода.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 1.5: Внешнеэкономические связи</strong><br>Заключение союзов, торговых соглашений и иных внешних договоров осуществляется исключительно городскими властями. Незаконные контакты с внешними силами запрещены и преследуются по закону.</p>
+
+      <h2 style="font-family:Orbitron,sans-serif;font-size:20px;font-weight:600;color:var(--white);margin:28px 0 10px;letter-spacing:0.03em;">Обязанности жителей GreenHill</h2>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 2.1: Общественный порядок</strong><br>Все жители обязаны соблюдать общественный порядок, включая уважение к окружающим, запрет на умышленные конфликты, драки, провокации и создание беспорядков.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 2.2: Экологическая ответственность</strong><br>Жители обязаны соблюдать экологические нормы города. Вырубка деревьев, уничтожение природных объектов и изменение ландшафта без разрешения городских властей запрещены.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 2.3: Участие в развитии города</strong><br>Каждый житель обязан вносить вклад в развитие города одним из следующих способов:<br>1) Личное участие (строительство, развитие инфраструктуры, ферм, добыча ресурсов)<br>2) Либо регулярный денежный взнос в городскую казну, предназначенный для закупки необходимых ресурсов за пределами города.<br>Уклонение от обоих форм участия запрещено.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 2.4: Военные обязательства</strong><br>В случае объявления военного положения каждый житель обязан встать на защиту города. Уклонение от военной службы допускается только по уважительным причинам, признанным властями.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 2.5: Военное снаряжение</strong><br>Жители должны по возможности иметь военное снаряжение согласно уставу. При его отсутствии город предоставляет снаряжение временно. По завершении военных действий всё выданное обмундирование подлежит возврату на городские склады.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 2.6: Репутация города</strong><br>Действия граждан, наносящие ущерб репутации города Greenhill, как внутри, так и за его пределами, запрещены. Администрация города имеет право наложить соответствующее наказание.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 2.7: Конфиденциальность и внешние объединения</strong><br>Граждане, состоящие или взаимодействующие с другими кланами, городами или объединениями, обязаны сохранять конфиденциальность информации о внутренней жизни Greenhill. Нарушение данного правила влечёт ответственность.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 2.8: Гражданство</strong><br>На территории города запрещено двойное гражданство. Житель Greenhill не может одновременно являться гражданином другого города-государства.</p>
+
+      <h2 style="font-family:Orbitron,sans-serif;font-size:20px;font-weight:600;color:var(--white);margin:28px 0 10px;letter-spacing:0.03em;">Имущество и строительство</h2>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 3.1: Строительство</strong><br>Любое строительство на территории города и прилегающих к нему земель требует предварительного одобрения городских властей. Незаконное строительство подлежит сносу за счёт нарушителя.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 3.2: Общественные ресурсы</strong><br>Использование ферм и иных ресурсов, принадлежащих городу, допускается только с разрешения городских властей.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 3.3: Общественные склады</strong><br>Все ресурсы, размещённые на общественных складах, являются собственностью города.<br><br><strong>Статья 3.3.1:</strong> Использование редких, ценных или трудно добываемых ресурсов возможно только с прямого разрешения властей.<br><br><strong>Статья 3.3.2:</strong> Использование обычных ресурсов в больших объёмах регулируется отдельными распоряжениями администрации.</p>
+
+      <h2 style="font-family:Orbitron,sans-serif;font-size:20px;font-weight:600;color:var(--white);margin:28px 0 10px;letter-spacing:0.03em;">Общая часть</h2>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 4.1: Чистота и санитарные нормы</strong><br>Жители обязаны соблюдать санитарные нормы города, включая:<br>4.1.1 Запрет на захламление территорий<br>4.1.2 Запрет на бесконтрольный разлив лавы и воды<br>4.1.3 Обязательную утилизацию мусора (лишних блоков, предметов)<br>4.1.4 Поддержание порядка в жилых и общественных зонах</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 4.2: Территориальная юрисдикция</strong><br>Прилегающие к городу территории в радиусе 500 блоков от края островов считаются частью города и подчиняются его законам.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 4.3: Власть над пространством</strong><br>Город владеет всем пространством над и под землёй. Любая деятельность в этих зонах регулируется городскими властями.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 4.4: Защита города</strong><br>Любые действия, направленные на подрыв стабильности, безопасности или развития города, запрещены. Все жители обязаны способствовать процветанию Greenhill.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 4.5: Защита прав жителей</strong><br>Все жители имеют право на защиту жизни, здоровья и имущества. Городские власти обязаны обеспечивать безопасность и правопорядок.</p>
+
+      <h2 style="font-family:Orbitron,sans-serif;font-size:20px;font-weight:600;color:var(--white);margin:28px 0 10px;letter-spacing:0.03em;">Уголовный Кодекс</h2>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 5.1: Защита культурного наследия</strong><br>Все исторические и культурные объекты города неприкосновенны в рамках ролевых событий. Разрушения, направленные на причинение вреда городу, подлежат компенсации и штрафу, размер которого устанавливается судьёй.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 5.2: Уважение к основателям</strong><br>Оскорбления в адрес основателей города недопустимы и влекут административную ответственность.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 5.3: Применение наказаний</strong><br>Если в законе не указана конкретная мера наказания, судья вправе определить её самостоятельно с учётом обстоятельств дела.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 5.4: Защита частной жизни</strong><br>Незаконное вторжение в жилище или сбор личной информации без согласия владельца запрещены.</p>
+
+      <p style="color:var(--gray);margin-bottom:14px;font-size:15px;line-height:1.75;"><strong style="color:var(--white);">Статья 5.5: Шпионаж</strong><br>Шпионаж в пользу другого государства или города считается тяжким преступлением и карается по закону.</p>
+    </div>
+  </div>
+  <div class="wiki-tab" id="wikitab-roles" style="display:none;">
+    <div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--gray-dim);margin-bottom:20px;display:flex;align-items:center;gap:5px;letter-spacing:0.05em;"><a data-page="home" style="color:var(--gray-dim);text-decoration:none;cursor:pointer;">GreenHill</a> › <span style="color:var(--gray);">Роли</span></div>
+    <h1 style="font-family:Orbitron,sans-serif;font-size:26px;font-weight:700;color:var(--white);padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:24px;text-transform:uppercase;letter-spacing:0.04em;">🏷️ Роли и звания</h1>
+    <p style="color:var(--gray);margin-bottom:24px;font-size:15px;line-height:1.75;">В GreenHill действует иерархическая система ролей, отражающая статус и полномочия жителя.</p>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:14px;letter-spacing:0.04em;">👑 Власть города</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:32px;">
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #fe00bd;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#fe00bd;">@Archon</span><span style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gray-dim);">fe00bd</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Верховное руководство города. Определяет стратегию, формирует задачи и контролирует ключевые решения и развитие города.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #925afe;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#925afe;">@marchal</span><span style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gray-dim);">925afe</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Заместитель главы города. Координирует работу ветвей власти, контролирует исполнение поручений и замещает Archon в его отсутствие.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #e3c65c;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#e3c65c;">@main</span><span style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gray-dim);">e3c65c</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Исполнительная власть города. Отвечает за практическое управление, экономику, внешние связи и реализацию решений Archon.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #fe621d;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#fe621d;">@Council</span><span style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gray-dim);">fe621d</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Совет при власти города. Участвует в обсуждении и формировании предложений по развитию и внутренним вопросам.</div>
+      </div>
+    </div>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:14px;letter-spacing:0.04em;">👥 Жители</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #90dbf4;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#90dbf4;">@Trusted resident ✅</span><span style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gray-dim);">90dbf4</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Надёжный гражданин, проверенный временем участник. Стабильно выполняет задачи и проявляет инициативу. Выдаётся по решению совета города.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #7ac9cc;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#7ac9cc;">@resident</span><span style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gray-dim);">7ac9cc</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Полноценный житель города, имеющий гражданство. Регулярно участвует в жизни GreenHill и зарабатывает доверие.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #7da9b3;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#7da9b3;">@Resident (Trial)</span><span style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gray-dim);">7da9b3</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Первые шаги в GreenHill. Знакомится с системой GreenScore и начинает вносить свой вклад. Находится на испытательном сроке.</div>
+      </div>
+    </div>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin:28px 0 14px;letter-spacing:0.04em;">🎭 Дополнительные роли</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #2f0d49;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#2f0d49;">@Spark</span><span style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gray-dim);">2f0d49</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Человек, создающий контент: блогер, стример и т.д. Помогает развитию сообщества через медиа.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #2c9181;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#2c9181;">@confederate</span><span style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gray-dim);">2c9181</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Союзники города / люди, находящиеся в городе, с которым заключён союз или альянс.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #95a5a6;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#95a5a6;">@viewer</span><span style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gray-dim);">95a5a6</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Гость сервера. Наблюдает за жизнью города без обязательств.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #930000;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#930000;">@muted</span><span style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gray-dim);">930000</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Нарушитель / временно забанен. Ограничен в правах до решения администрации.</div>
+      </div>
+    </div>
+  </div>
+  <div class="wiki-tab" id="wikitab-greenscore" style="display:none;">
+    <div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--gray-dim);margin-bottom:20px;display:flex;align-items:center;gap:5px;letter-spacing:0.05em;"><a data-page="home" style="color:var(--gray-dim);text-decoration:none;cursor:pointer;">GreenHill</a> › <span style="color:var(--gray);">GreenScore</span></div>
+    <h1 style="font-family:Orbitron,sans-serif;font-size:26px;font-weight:700;color:var(--white);padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:24px;text-transform:uppercase;letter-spacing:0.04em;">🌿 GreenScore (GH Leaves)</h1>
+    <p style="color:var(--gray);font-size:15px;line-height:1.75;margin-bottom:24px;">GreenScore — система общественной репутации GreenHill.</p>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:12px;letter-spacing:0.03em;">📜 Основные принципы</h2>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:24px;">
+      <p style="color:var(--gray);font-size:14px;line-height:1.8;"><strong style="color:var(--white);">🍃 Leaves</strong> начисляются только за подтверждённый вклад в развитие города: экономику, безопасность, инфраструктуру, изображение.</p>
+      <p style="color:var(--gray);font-size:14px;line-height:1.8;margin-top:10px;"><strong style="color:var(--accent);">Leaves не начисляются:</strong></p>
+      <div style="color:var(--gray);font-size:13px;line-height:1.9;padding-left:6px;margin-top:4px;">• за простой онлайн<br>• за игру исключительно в личных целях<br>• за незавершённые работы<br>• за проекты, не согласованные с администрацией</div>
+      <p style="color:var(--gray);font-size:14px;line-height:1.8;margin-top:12px;"><strong style="color:var(--accent);">🍃 Leaves нельзя</strong> передавать другим игрокам или начислять самому себе.</p>
+      <p style="color:var(--gray);font-size:14px;line-height:1.8;margin-top:6px;">Количество Leaves отражает уровень доверия города к жителю.</p>
+    </div>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:12px;letter-spacing:0.03em;">👑 Кто может начислять Leaves</h2>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:24px;">
+      <div style="color:var(--gray);font-size:13px;line-height:1.9;">• Глава города<br>• Уполномоченные администрации (министры)<br>• Руководители городских проектов</div>
+      <p style="color:var(--gray-dim);font-size:12px;line-height:1.65;margin-top:8px;font-style:italic;">Все начисления фиксируются в журнале GreenScore.</p>
+    </div>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:12px;letter-spacing:0.03em;">🌿 Получение Leaves</h2>
+
+    <h3 style="font-family:JetBrains Mono,monospace;font-size:14px;color:var(--accent);margin:18px 0 8px;">🏗 Строительство</h3>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;margin-bottom:14px;">
+      <div style="color:var(--gray);font-size:13px;line-height:1.9;">• Небольшая постройка — <strong style="color:var(--accent);">+1 🍃</strong><br>• Полноценный объект — <strong style="color:var(--accent);">+3 🍃</strong><br>• Крупный городской проект — <strong style="color:var(--accent);">+5 🍃</strong></div>
+    </div>
+
+    <h3 style="font-family:JetBrains Mono,monospace;font-size:14px;color:var(--accent);margin:18px 0 8px;">⚙️ Фермы и механики</h3>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;margin-bottom:14px;">
+      <div style="color:var(--gray);font-size:13px;line-height:1.9;">• Небольшая оптимизация — <strong style="color:var(--accent);">+2 🍃</strong><br>• Создание новой фермы — <strong style="color:var(--accent);">+4 🍃</strong><br>• Уникальная механика или система — <strong style="color:var(--accent);">+6 🍃</strong></div>
+    </div>
+
+    <h3 style="font-family:JetBrains Mono,monospace;font-size:14px;color:var(--accent);margin:18px 0 8px;">⛏️ Добыча ресурсов</h3>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;margin-bottom:14px;">
+      <div style="color:var(--gray);font-size:13px;line-height:1.9;">• Выполнение городской нормы — <strong style="color:var(--accent);">+1 🍃</strong><br>• Крупная поставка ресурсов — <strong style="color:var(--accent);">+2–3 🍃</strong><br>• Редкие или срочные ресурсы — <strong style="color:var(--accent);">+4 🍃</strong></div>
+    </div>
+
+    <h3 style="font-family:JetBrains Mono,monospace;font-size:14px;color:var(--accent);margin:18px 0 8px;">💡 Инициатива</h3>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;margin-bottom:24px;">
+      <div style="color:var(--gray);font-size:13px;line-height:1.9;">• Полезное предложение — <strong style="color:var(--accent);">+1 🍃</strong><br>• Идея, реализованная в городе — <strong style="color:var(--accent);">+3 🍃</strong><br>• Руководство городским проектом — <strong style="color:var(--accent);">+5 🍃</strong></div>
+    </div>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:12px;letter-spacing:0.03em;">📋 Городские задания</h2>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:24px;">
+      <p style="color:var(--gray);font-size:14px;line-height:1.7;">Все актуальные задания публикуются в канале <strong style="color:var(--accent);">#активные-задачи</strong>.</p>
+      <p style="color:var(--gray);font-size:14px;line-height:1.7;margin-top:10px;">Каждое задание содержит:</p>
+      <div style="color:var(--gray);font-size:13px;line-height:1.9;padding-left:6px;margin-top:4px;">📦 Что необходимо сделать<br>📊 Требуемый объём работы<br>🍃 Награду в GreenScore и валюте<br>📝 Дополнительные условия</div>
+      <p style="color:var(--accent);font-size:13px;line-height:1.65;margin-top:10px;">✅ GreenScore начисляется только после проверки выполненной работы.</p>
+      <p style="color:var(--gray-dim);font-size:13px;line-height:1.65;margin-top:4px;">❌ Если задание выполнено не полностью или с нарушениями — награда не начисляется.</p>
+    </div>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:12px;letter-spacing:0.03em;">🛍 Магазин GreenScore</h2>
+    <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;">
+      <p style="color:var(--gray);font-size:14px;line-height:1.7;">Заработанные 🍃 Leaves можно обменивать на различные награды в городском магазине.</p>
+      <p style="color:var(--gray);font-size:14px;line-height:1.7;margin-top:10px;">Ассортимент магазина регулярно пополняется и включает:</p>
+      <div style="color:var(--gray);font-size:13px;line-height:1.9;padding-left:6px;margin-top:4px;">💰 Игровую валюту<br>📦 Редкие ресурсы и материалы<br>🛠 Полезные предметы<br>🎁 Уникальные награды и привилегии<br>✨ Эксклюзивные предложения, доступные только за GreenScore</div>
+      <p style="color:var(--gray-dim);font-size:12px;line-height:1.65;margin-top:10px;font-style:italic;">Все доступные товары и их стоимость публикуются в канале #🛍-магазин.</p>
+    </div>
+  </div>
+  <div class="wiki-tab" id="wikitab-administration" style="display:none;">
+    <div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--gray-dim);margin-bottom:20px;display:flex;align-items:center;gap:5px;letter-spacing:0.05em;"><a data-page="home" style="color:var(--gray-dim);text-decoration:none;cursor:pointer;">GreenHill</a> › <span style="color:var(--gray);">Администрация</span></div>
+    <h1 style="font-family:Orbitron,sans-serif;font-size:26px;font-weight:700;color:var(--white);padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:24px;text-transform:uppercase;letter-spacing:0.04em;">🏛 Администрация города</h1>
+    <p style="color:var(--gray);margin-bottom:20px;font-size:15px;line-height:1.75;">Администрация GreenHill — совет, управляющий городом. Принимает решения по развитию, бюджету и стратегии.</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #fe00bd;border-radius:var(--radius);padding:14px 18px;display:flex;align-items:center;gap:12px;">
+        <span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#fe00bd;">@Archon</span>
+        <span style="color:var(--gray-dim);">—</span>
+        <span style="font-family:JetBrains Mono,monospace;font-size:15px;color:var(--white);">@XMURAYA</span>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #925afe;border-radius:var(--radius);padding:14px 18px;display:flex;align-items:center;gap:12px;">
+        <span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#925afe;">@marchal</span>
+        <span style="color:var(--gray-dim);">—</span>
+        <span style="font-family:JetBrains Mono,monospace;font-size:15px;color:var(--white);">@Nifero</span>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #e3c65c;border-radius:var(--radius);padding:14px 18px;display:flex;align-items:center;gap:12px;">
+        <span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#e3c65c;">@main</span>
+        <span style="color:var(--gray-dim);">—</span>
+        <span style="font-family:JetBrains Mono,monospace;font-size:15px;color:var(--white);">@HikySick1</span>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #fe621d;border-radius:var(--radius);padding:14px 18px;display:flex;align-items:center;gap:12px;">
+        <span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#fe621d;">@Council</span>
+        <span style="color:var(--gray-dim);">—</span>
+        <span style="font-family:JetBrains Mono,monospace;font-size:15px;color:var(--white);">@ErRo223</span>
+      </div>
+    </div>
+  </div>
+  <div class="wiki-tab" id="wikitab-structures" style="display:none;">
+    <div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--gray-dim);margin-bottom:20px;display:flex;align-items:center;gap:5px;letter-spacing:0.05em;"><a data-page="home" style="color:var(--gray-dim);text-decoration:none;cursor:pointer;">GreenHill</a> › <span style="color:var(--gray);">Структуры</span></div>
+    <h1 style="font-family:Orbitron,sans-serif;font-size:26px;font-weight:700;color:var(--white);padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:20px;text-transform:uppercase;letter-spacing:0.04em;">⚙️ Структуры города</h1>
+    <p style="color:var(--gray);margin-bottom:12px;font-size:15px;line-height:1.75;">В GreenHill действуют городские структуры. Выберите подраздел слева для подробной информации.</p>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:20px;">
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 26px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><span style="font-size:22px;">🏦</span><h3 style="font-family:Orbitron,sans-serif;font-size:16px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);">Банк GreenHill</h3></div>
+        <p style="font-size:13px;color:var(--gray);line-height:1.65;">Финансовая система города. Кредиты, вклады и экономическая поддержка жителей.</p>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 26px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><span style="font-size:22px;">📰</span><h3 style="font-family:Orbitron,sans-serif;font-size:16px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);">СМИ GreenHill</h3></div>
+        <p style="font-size:13px;color:var(--gray);line-height:1.65;">Освещение городских событий, новости, реклама и ивенты.</p>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 26px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><span style="font-size:22px;">⛪</span><h3 style="font-family:Orbitron,sans-serif;font-size:16px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);">Церковь Пустоты</h3></div>
+        <p style="font-size:13px;color:var(--gray);line-height:1.65;">Духовный центр города. Хранит Писание Пустоты и традиции.</p>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 26px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><span style="font-size:22px;">⚖️</span><h3 style="font-family:Orbitron,sans-serif;font-size:16px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);">Совет города</h3></div>
+        <p style="font-size:13px;color:var(--gray);line-height:1.65;">Административный орган управления. Решения по развитию и бюджету.</p>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 26px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><span style="font-size:22px;">🛠</span><h3 style="font-family:Orbitron,sans-serif;font-size:16px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--white);">Стройотряд</h3></div>
+        <p style="font-size:13px;color:var(--gray);line-height:1.65;">Команда строителей. Инфраструктура, дороги и ключевые проекты.</p>
+      </div>
+    </div>
+  </div>
+  <div class="wiki-tab" id="wikitab-structure-bank" style="display:none;">
+    <div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--gray-dim);margin-bottom:20px;display:flex;align-items:center;gap:5px;letter-spacing:0.05em;"><a data-page="home" style="color:var(--gray-dim);text-decoration:none;cursor:pointer;">GreenHill</a> › <span style="color:var(--gray);">Банк</span></div>
+    <h1 style="font-family:Orbitron,sans-serif;font-size:26px;font-weight:700;color:var(--white);padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:20px;text-transform:uppercase;letter-spacing:0.04em;">🏦 Банк GreenHill</h1>
+    <p style="color:var(--gray);margin-bottom:16px;font-size:15px;line-height:1.75;">Городская финансовая структура для поддержки развития жителей и экономики города. Выдаёт кредиты на строительство, фермы, бизнес и ресурсы.</p>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:10px;letter-spacing:0.03em;">💳 Система кредитования</h2>
+    <p style="color:var(--gray);font-size:14px;line-height:1.7;margin-bottom:14px;">Каждый кредит оформляется договором между банком и жителем с указанием суммы, срока, процента и цели. После открытия здания банка все операции проводятся официально.</p>
+
+    <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;color:var(--gray);">
+        <tr style="border-bottom:1px solid var(--border);"><th style="text-align:left;padding:8px 10px;color:var(--gray-dim);font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Роль</th><th style="text-align:left;padding:8px 10px;color:var(--gray-dim);font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Лимит</th><th style="text-align:left;padding:8px 10px;color:var(--gray-dim);font-family:JetBrains Mono,monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;">Процент</th></tr>
+        <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px 10px;">🌱 Resident Trial</td><td style="padding:8px 10px;">до 100 AR</td><td style="padding:8px 10px;">20% / нед</td></tr>
+        <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px 10px;">🏡 Resident</td><td style="padding:8px 10px;">до 256 AR</td><td style="padding:8px 10px;">15% / нед</td></tr>
+        <tr><td style="padding:8px 10px;">⭐ Trusted Resident</td><td style="padding:8px 10px;">до 512 AR</td><td style="padding:8px 10px;">10% / нед</td></tr>
+      </table>
+    </div>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:10px;letter-spacing:0.03em;">⚖️ Правила</h2>
+    <div style="color:var(--gray);font-size:13px;line-height:1.9;padding-left:6px;margin-bottom:16px;">
+      • Кредит используется строго по договору (стройка, производство, торговля)<br>
+      • Просрочка → комиссия, ограничение новых кредитов, снижение GreenScore<br>
+      • После 3 выплаченных без просрочек кредитов — +25–50% к лимиту или −1–2% ставки
+    </div>
+
+    <div style="background:var(--panel);border:1px solid var(--border-accent);border-radius:var(--radius);padding:16px 20px;">
+      <p style="color:var(--gray);font-size:14px;line-height:1.7;text-align:center;"><strong style="color:var(--accent);">🏦 Банк GreenHill</strong> — не для ограничения, а для развития города.</p>
+    </div>
+  </div>
+  <div class="wiki-tab" id="wikitab-structure-church" style="display:none;">
+    <div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--gray-dim);margin-bottom:20px;display:flex;align-items:center;gap:5px;letter-spacing:0.05em;"><a data-page="home" style="color:var(--gray-dim);text-decoration:none;cursor:pointer;">GreenHill</a> › <span style="color:var(--gray);">Церковь</span></div>
+    <h1 style="font-family:Orbitron,sans-serif;font-size:26px;font-weight:700;color:var(--white);padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:20px;text-transform:uppercase;letter-spacing:0.04em;">⛪ Церковь Пустоты</h1>
+    <p style="color:var(--gray);margin-bottom:16px;font-size:15px;line-height:1.75;">Духовный центр города. Хранит <strong style="color:var(--white);">Писание Пустоты</strong> — текст без автора и даты, найденный в руинах при основании поселения.</p>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:10px;letter-spacing:0.03em;">📜 Миссия</h2>
+    <div style="color:var(--gray);font-size:13px;line-height:1.9;padding-left:6px;margin-bottom:16px;">
+      • Сохранение памяти о прошлом и пути через Разлом<br>
+      • Проведение обрядов и церемоний<br>
+      • Духовное наставничество жителей<br>
+      • Хранение и толкование Писания Пустоты
+    </div>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:10px;letter-spacing:0.03em;">⚫ Учение</h2>
+    <blockquote style="border-left:2px solid var(--accent-dark);margin:0 0 16px;padding:12px 20px;color:var(--gray);font-style:italic;font-size:14px;line-height:1.7;background:rgba(255,255,255,0.02);border-radius:0 var(--radius) var(--radius) 0;">
+      Ты никто. Мы никто. И в этом — освобождение.<br><br>
+      Когда город станет совершенным, когда свет и механизм сольются в одно — тогда Пустота вспомнит о нас.
+    </blockquote>
+
+    <div style="background:var(--panel);border:1px solid rgba(212,175,55,0.3);border-radius:var(--radius);padding:16px 20px;">
+      <p style="color:var(--gray);font-size:14px;line-height:1.7;text-align:center;">Пустота не уничтожает. <strong style="color:var(--gold);">Она возвращает.</strong></p>
+    </div>
+  </div>
+  <div class="wiki-tab" id="wikitab-structure-media" style="display:none;">
+    <div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--gray-dim);margin-bottom:20px;display:flex;align-items:center;gap:5px;letter-spacing:0.05em;"><a data-page="home" style="color:var(--gray-dim);text-decoration:none;cursor:pointer;">GreenHill</a> › <span style="color:var(--gray);">СМИ</span></div>
+    <h1 style="font-family:Orbitron,sans-serif;font-size:26px;font-weight:700;color:var(--white);padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:20px;text-transform:uppercase;letter-spacing:0.04em;">📰 СМИ GreenHill</h1>
+    <p style="color:var(--gray);margin-bottom:16px;font-size:15px;line-height:1.75;">Городская информационная структура, ответственная за освещение жизни города, создание контента и организацию мероприятий.</p>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:10px;letter-spacing:0.03em;">📢 Рекламный отдел</h2>
+    <div style="color:var(--gray);font-size:13px;line-height:1.9;padding-left:6px;margin-bottom:14px;">
+      • Создание рекламных материалов<br>
+      • Продвижение городских проектов и бизнеса<br>
+      • Оформление объявлений и визуального контента
+    </div>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:10px;letter-spacing:0.03em;">🎪 Ивент-отдел</h2>
+    <div style="color:var(--gray);font-size:13px;line-height:1.9;padding-left:6px;margin-bottom:14px;">
+      • Разработка концепций и сценариев мероприятий<br>
+      • Организация турниров, квестов, фестивалей<br>
+      • Проведение праздничных и ролевых событий
+    </div>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:10px;letter-spacing:0.03em;">🏛 Структура</h2>
+    <div style="color:var(--gray);font-size:13px;line-height:1.9;padding-left:6px;margin-bottom:14px;">
+      📰 <strong style="color:var(--white);">Главный редактор</strong> — развитие СМИ, утверждение публикаций<br>
+      ✍️ <strong style="color:var(--white);">Журналисты</strong> — новости, интервью, статьи, отчёты
+    </div>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:10px;letter-spacing:0.03em;">📜 Правила</h2>
+    <div style="color:var(--gray);font-size:13px;line-height:1.9;padding-left:6px;margin-bottom:16px;">
+      ✅ Достоверность информации, согласование публикаций<br>
+      ❌ Запрещены ложь, распространение закрытых данных, использование СМИ против жителей
+    </div>
+
+    <div style="background:var(--panel);border:1px solid var(--border-accent);border-radius:var(--radius);padding:16px 20px;">
+      <p style="color:var(--gray);font-size:14px;line-height:1.7;text-align:center;"><strong style="color:var(--accent);">СМИ — это не просто новости.</strong> Это память города и инструмент его развития.</p>
+    </div>
+  </div>
+  <div class="wiki-tab" id="wikitab-events" style="display:none;">
+    <div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--gray-dim);margin-bottom:20px;display:flex;align-items:center;gap:5px;letter-spacing:0.05em;"><a data-page="home" style="color:var(--gray-dim);text-decoration:none;cursor:pointer;">GreenHill</a> › <span style="color:var(--gray);">Ивенты</span></div>
+    <h1 style="font-family:Orbitron,sans-serif;font-size:26px;font-weight:700;color:var(--white);padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:20px;text-transform:uppercase;letter-spacing:0.04em;">🎪 Ивенты</h1>
+    <p style="color:var(--gray);font-size:15px;line-height:1.75;">Здесь будут публиковаться анонсы предстоящих ивентов, результаты прошедших событий и информация о регулярных мероприятиях города.</p>
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;border:1px dashed var(--border);border-radius:var(--radius-lg);margin-top:24px;">
+      <span style="font-size:48px;margin-bottom:12px;opacity:0.3;">🎪</span>
+      <p style="font-family:JetBrains Mono,monospace;font-size:13px;color:var(--gray-dim);letter-spacing:0.08em;">ИВЕНТЫ ПОКА НЕ ПРОВОДИЛИСЬ</p>
+      <p style="font-size:13px;color:var(--gray-dim);margin-top:6px;">Следите за анонсами в Discord</p>
+    </div>
+  </div>
+  <div class="wiki-tab" id="wikitab-lore" style="display:none;">
+    <div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--gray-dim);margin-bottom:20px;display:flex;align-items:center;gap:5px;letter-spacing:0.05em;"><a data-page="home" style="color:var(--gray-dim);text-decoration:none;cursor:pointer;">GreenHill</a> › <span style="color:var(--gray);">Лор</span></div>
+    <div class="wiki-text">
+      <h1 style="font-family:Orbitron,sans-serif;font-size:26px;font-weight:700;color:var(--white);padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:24px;text-transform:uppercase;letter-spacing:0.04em;">⛪ Легенда GreenHill</h1>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Старый мир не погиб — он раскололся.</p>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Небо разошлось трещиной, и в этой трещине исчезли государства, города и сама уверенность в будущем.<br>Мы не бежали. Мы сделали выбор.</p>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Собрав технологии, архивы и знания предков, мы шагнули в Разлом — туда, где не существовало ни карт, ни памяти.</p>
+      <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin:28px 0 12px;letter-spacing:0.03em;">🌫 Разлом</h2>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Новый мир встретил нас тишиной.</p>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Среди пепла и камня стояла разрушенная церковь — единственное сооружение, которое будто бы ждало нас.<br>В её руинах мы нашли <strong style="color:var(--white);">Писание Пустоты</strong> — текст без автора, без даты, без начала.</p>
+      <blockquote style="border-left:2px solid var(--accent-dark);margin:18px 0;padding:12px 20px;color:var(--gray);font-style:italic;font-size:14px;line-height:1.7;background:rgba(255,255,255,0.02);border-radius:0 var(--radius) var(--radius) 0;">Ты никто.<br>Мы никто.<br>И в этом — освобождение.</blockquote>
+      <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin:28px 0 12px;letter-spacing:0.03em;">🏛 Первое Возрождение</h2>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Мы восстановили церковь.<br>Возвели вокруг неё первое поселение.<br>Начали жить по Закону Пустоты — без имени, без титула, без притязаний.</p>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Прошли поколения.</p>
+      <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin:28px 0 12px;letter-spacing:0.03em;">🌍 Второй Разлом</h2>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Земля содрогнулась.<br>Апокалипсис пришёл из глубины.</p>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Город был поглощён: улицы ушли под землю, башни исчезли, дома стали фундаментом новых руин.</p>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Но церковь осталась.</p>
+      <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin:28px 0 12px;letter-spacing:0.03em;">🧱 Настоящее</h2>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Мы не исчезли. Мы помнили.</p>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Новый город строится не поверх старого —<br>а вокруг него, над ним, сквозь него.</p>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Теперь под нашими улицами — прошлое.<br>Под фундаментами — поколения.<br>Под церковью — истина.</p>
+      <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin:28px 0 12px;letter-spacing:0.03em;">📜 Писание Пустоты</h2>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Есть строки, которые читают только хранители:</p>
+      <blockquote style="border-left:2px solid var(--accent-dark);margin:18px 0;padding:12px 20px;color:var(--gray);font-style:italic;font-size:14px;line-height:1.7;background:rgba(255,255,255,0.02);border-radius:0 var(--radius) var(--radius) 0;">Когда город станет совершенным,<br>когда свет и механизм сольются в одно,<br>когда люди забудут, что они люди —<br>тогда Пустота вспомнит о нас.</blockquote>
+      <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin:28px 0 12px;letter-spacing:0.03em;">⚫ Истина</h2>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Мы знаем: Разлом не был случайностью.<br>Пустота — не враг.</p>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;font-size:17px;color:var(--accent);">Она — начало.</p>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;">Мы не боимся этого дня.<br>Ибо Пустота не уничтожает.</p>
+      <p style="color:var(--gray);margin-bottom:18px;font-size:15px;line-height:1.75;font-size:17px;color:var(--accent);">Она возвращает.</p>
+    </div>
+  </div>
+</main>
+</div>
+</div>
+</div>
+
+<div id="page-roadmap" class="page-view">
+<div class="rm-page">
+  <div class="rm-section-label">РАЗВИТИЕ ГОРОДА</div>
+  <h1 class="rm-title">ROADMAP</h1>
+  <p class="rm-subtitle" id="rm-subtitle">Загрузка данных...</p>
+  <div class="rm-stats-row">
+    <div class="rm-stat-card"><div class="rm-stat-value green" id="rm-stat-done">—</div><div class="rm-stat-label">Готово</div></div>
+    <div class="rm-stat-card"><div class="rm-stat-value muted" id="rm-stat-left">—</div><div class="rm-stat-label">В работе</div></div>
+    <div class="rm-stat-card"><div class="rm-stat-value gold" id="rm-stat-total">—</div><div class="rm-stat-label">Всего этапов</div></div>
+  </div>
+  <div class="rm-progress-section">
+    <div class="rm-progress-header"><span class="rm-progress-title">Общий прогресс</span><span class="rm-progress-pct" id="rm-pct-label">0%</span></div>
+    <div class="rm-progress-track"><div class="rm-progress-fill" id="rm-progress-fill" style="width:0%"></div></div>
+    <div class="rm-segments-track" id="rm-segments-track"></div>
+  </div>
+  <div class="rm-timeline" id="rm-timeline">
+    <div class="rm-timeline-spine"><div class="rm-timeline-spine-fill" id="rm-spine-fill" style="height:0%"></div></div>
+  </div>
+</div>
+</div>
+
+<div id="page-404" class="page-view">
+  <div class="p404-wrap">
+    <div class="p404-code"><span class="r">C</span><span class="r">I</span><span class="r">T</span><span class="r">Y</span></div>
+    <div class="p404-status">SYSTEM ERROR</div>
+    <p class="p404-desc">Этот район ещё не построен. Мы работаем над этим.</p>
+    <div class="p404-back">
+      <a class="btn btn-secondary" data-page="home">← Вернуться в центр города</a>
+    </div>
+  </div>
+</div>
+
+<div class="g-modal" id="g-modal">
+  <div class="g-modal-overlay" id="g-modal-overlay"></div>
+  <div class="g-modal-inner">
+    <button class="g-modal-close" id="g-modal-close">✕</button>
+    <div class="g-modal-layout">
+      <div class="g-modal-info" id="g-modal-info">
+        <span class="project-tag completed" id="g-modal-tag"></span>
+        <div class="project-title" id="g-modal-title"></div>
+        <p class="project-desc" id="g-modal-desc"></p>
+      </div>
+      <div class="g-modal-visual" id="g-modal-visual">
+        <img class="g-modal-img" id="g-modal-img" src="" alt="">
+        <button class="g-modal-prev" id="g-modal-prev">‹</button>
+        <button class="g-modal-next" id="g-modal-next">›</button>
+        <div class="g-modal-dots" id="g-modal-dots"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">
+    <div style="width:28px;height:28px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:Orbitron,sans-serif;font-weight:900;font-size:16px;color:var(--bg-deep);">G</div>
+    <div>GREENHILL<span class="accent">.</span><span class="sub">CITY STATE</span></div>
+  </div>
+  <ul class="footer-links">
+    <li><a data-page="home">Главная</a></li>
+    <li><a data-page="roadmap">Роудмап</a></li>
+    <li><a href="#" target="_blank">Discord</a></li>
+  </ul>
+  <div class="footer-copy">© 2024-2026 GreenHill City State</div>
+</footer>
+
+<div class="status-bar">
+  <div class="status-item"><span class="status-dot"></span>GREENHILL SYSTEM ONLINE</div>
+  <div class="status-sep"></div>
+  <div class="status-item">MEMBERS: 30+</div>
+  <div class="status-sep"></div>
+  <div class="status-item">GS LEAVES ACTIVE</div>
+  <div class="status-sep"></div>
+  <div class="ticker"><span class="ticker-inner">〔 GREENHILL DEVELOPMENT NETWORK 〕&nbsp;&nbsp;&nbsp;&nbsp;〔 СУЩЕСТВУЕМ С 11.08.2024 〕&nbsp;&nbsp;&nbsp;&nbsp;〔 COMMUNITY FIRST 〕&nbsp;&nbsp;&nbsp;&nbsp;〔 30+ УЧАСТНИКОВ 〕&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+</div>
+
+<script>
+function showPage(pageId) {
+  document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + pageId);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.nav-links a[data-page], .mobile-drawer ul a[data-page]').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === pageId);
+  });
+  if (pageId === 'roadmap') { initRoadmap(); window.scrollTo(0, 0); return; }
+  if (pageId === '404') {
+    const p = document.getElementById('page-404');
+    p.classList.remove('anim'); void p.offsetHeight; p.classList.add('anim');
+    window.scrollTo(0, 0); return;
+  }
+  window.scrollTo(0, 0);
+  closeBurger();
+}
+
+document.addEventListener('click', e => {
+  const pageEl = e.target.closest('[data-page]');
+  if (pageEl) { e.preventDefault(); showPage(pageEl.dataset.page); }
+});
+
+function closeBurger() {
+  document.getElementById('burger').classList.remove('open');
+  document.getElementById('mobile-drawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('burger').addEventListener('click', () => {
+  const open = document.getElementById('burger').classList.toggle('open');
+  document.getElementById('mobile-drawer').classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+});
+
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => { if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 80); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+let roadmapInited = false;
+const ROADMAP = [
+  { name: 'Основание города GreenHill', done: 1 },
+  { name: 'Создание администрации и системы управления', done: 1 },
+  { name: 'Разработка системы GreenScore', done: 1 },
+  { name: 'Проектирование разметки города', done: 0, wip: 1 },
+  { name: 'Развитие экономики', done: 0, wip: 1 },
+  { name: 'Система кредитов', done: 0 },
+  { name: 'Конституция города', done: 1 },
+  { name: 'Церковь', done: 0 },
+  { name: 'СМИ города', done: 0 },
+  { name: 'Расширение территории', done: 0 },
+  { name: 'Запуск городского портала', done: 1 }
+];
+
+function initRoadmap() {
+  if (roadmapInited) return;
+  renderRoadmap();
+  roadmapInited = true;
+}
+
+function renderRoadmap() {
+  const timeline = document.getElementById('rm-timeline');
+  const spineFill = document.getElementById('rm-spine-fill');
+  const progFill = document.getElementById('rm-progress-fill');
+  const pctLabel = document.getElementById('rm-pct-label');
+  const segTrack = document.getElementById('rm-segments-track');
+  const subtitle = document.getElementById('rm-subtitle');
+
+  const total = ROADMAP.length;
+  const done = ROADMAP.filter(s => s.done === 1).length;
+  const left = total - done;
+  const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+
+  document.getElementById('rm-stat-done').textContent = done;
+  document.getElementById('rm-stat-left').textContent = left;
+  document.getElementById('rm-stat-total').textContent = total;
+  subtitle.textContent = done + ' из ' + total + ' этапов завершено · ' + left + ' остаётся';
+
+  segTrack.innerHTML = '';
+  ROADMAP.forEach(s => {
+    const seg = document.createElement('div');
+    seg.className = 'rm-seg' + (s.done ? ' done' : '');
+    segTrack.appendChild(seg);
+  });
+
+  timeline.querySelectorAll('.rm-step').forEach(el => el.remove());
+  ROADMAP.forEach((step, i) => {
+    const isDone = step.done === 1;
+    const isWip = !isDone && step.wip;
+    const badge = isDone ? '<span class="rm-step-badge badge-done">ГОТОВО</span>' : (isWip ? '<span class="rm-step-badge badge-wip">В РАБОТЕ</span>' : '<span class="rm-step-badge badge-pending">ОЖИДАЕТ</span>');
+    const wrapper = document.createElement('div');
+    wrapper.className = 'rm-step' + (isDone ? ' done-step' : '');
+    wrapper.style.animationDelay = (i * 60) + 'ms';
+    wrapper.innerHTML = '<div class="rm-step-dot-wrap"><div class="rm-step-dot' + (isDone ? ' done' : '') + '"><div class="rm-step-dot-inner"></div></div></div><div class="rm-step-body"><div class="rm-step-header"><span class="rm-step-index">' + String(i+1).padStart(2,'0') + '</span><span class="rm-step-name">' + step.name + '</span>' + badge + '</div></div>';
+    timeline.appendChild(wrapper);
+  });
+
+  setTimeout(() => {
+    progFill.style.width = pct + '%';
+    pctLabel.textContent = pct + '%';
+    const lastDone = ROADMAP.map(s => s.done).lastIndexOf(1);
+    if (lastDone >= 0) {
+      spineFill.style.height = Math.round(((lastDone + 0.5) / total) * 100) + '%';
+    }
+  }, 200);
+}
+
+let modalData = { imgs: null, idx: 0 };
+const modal = document.getElementById('g-modal');
+const modalImg = document.getElementById('g-modal-img');
+const modalPrev = document.getElementById('g-modal-prev');
+const modalNext = document.getElementById('g-modal-next');
+const modalDots = document.getElementById('g-modal-dots');
+const modalTag = document.getElementById('g-modal-tag');
+const modalTitle = document.getElementById('g-modal-title');
+const modalDesc = document.getElementById('g-modal-desc');
+
+function openModal(imgs, idx, tagText, titleText, descText) {
+  modalData.imgs = imgs;
+  modalData.idx = idx;
+  modalTag.textContent = tagText;
+  modalTitle.textContent = titleText;
+  modalDesc.textContent = descText;
+  showModal();
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function showModal() {
+  const i = modalData.idx;
+  const imgs = modalData.imgs;
+  modalImg.src = imgs[i].src;
+  modalPrev.style.display = imgs.length > 1 ? 'flex' : 'none';
+  modalNext.style.display = imgs.length > 1 ? 'flex' : 'none';
+  modalDots.innerHTML = '';
+  imgs.forEach((_, j) => {
+    const d = document.createElement('span');
+    d.className = 'g-modal-dot' + (j === i ? ' active' : '');
+    d.addEventListener('click', () => { modalData.idx = j; showModal(); });
+    modalDots.appendChild(d);
+  });
+}
+
+modalPrev.addEventListener('click', () => {
+  modalData.idx = (modalData.idx - 1 + modalData.imgs.length) % modalData.imgs.length;
+  showModal();
+});
+modalNext.addEventListener('click', () => {
+  modalData.idx = (modalData.idx + 1) % modalData.imgs.length;
+  showModal();
+});
+document.getElementById('g-modal-close').addEventListener('click', closeModal);
+document.getElementById('g-modal-overlay').addEventListener('click', closeModal);
+document.addEventListener('keydown', e => {
+  if (modal.style.display === 'flex') {
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'ArrowLeft') modalPrev.click();
+    if (e.key === 'ArrowRight') modalNext.click();
+  }
+});
+
+function initGalleries() {
+  document.querySelectorAll('.project-img[data-images]').forEach(gallery => {
+    const imgs = gallery.querySelectorAll('.gallery-img');
+    const dots = gallery.querySelectorAll('.gallery-dot');
+    const prev = gallery.querySelector('.gallery-prev');
+    const next = gallery.querySelector('.gallery-next');
+    const placeholder = gallery.querySelector('.project-img-placeholder');
+    const card = gallery.closest('.project-card');
+    const tagText = card ? card.querySelector('.project-tag').textContent : '';
+    const titleText = card ? card.querySelector('.project-title').textContent : '';
+    const descText = card ? card.querySelector('.project-desc').textContent : '';
+    let current = 0;
+    let interval;
+
+    function show(idx) {
+      imgs.forEach((img, i) => img.classList.toggle('active', i === idx));
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === idx));
+      current = idx;
+    }
+
+    function nextSlide() { show((current + 1) % imgs.length); }
+    function prevSlide() { show((current - 1 + imgs.length) % imgs.length); }
+
+    if (next) next.addEventListener('click', e => { e.stopPropagation(); nextSlide(); restartInterval(); });
+    if (prev) prev.addEventListener('click', e => { e.stopPropagation(); prevSlide(); restartInterval(); });
+    dots.forEach((dot, i) => dot.addEventListener('click', e => { e.stopPropagation(); show(i); restartInterval(); }));
+
+    imgs.forEach((img, i) => {
+      img.addEventListener('click', e => {
+        e.stopPropagation();
+        openModal(imgs, i, tagText, titleText, descText);
+      });
+    });
+
+    function restartInterval() {
+      clearInterval(interval);
+      if (imgs.length > 1) interval = setInterval(nextSlide, 5000);
+    }
+
+    gallery.addEventListener('mouseenter', () => clearInterval(interval));
+    gallery.addEventListener('mouseleave', restartInterval);
+
+    if (imgs.length > 0) {
+      let loaded = 0;
+      imgs.forEach(img => {
+        if (img.complete) { loaded++; checkAllLoaded(); }
+        else img.addEventListener('load', () => { loaded++; checkAllLoaded(); });
+        img.addEventListener('error', () => { img.style.display = 'none'; loaded++; checkAllLoaded(); });
+      });
+      function checkAllLoaded() {
+        if (loaded === imgs.length && placeholder) {
+          const anyVisible = Array.from(imgs).some(i => i.style.display !== 'none');
+          placeholder.style.display = anyVisible ? 'none' : 'flex';
+        }
+      }
+    }
+
+    if (imgs.length > 1) interval = setInterval(nextSlide, 5000);
+  });
+}
+initGalleries();
+
+function initWikiTabs() {
+  const links = document.querySelectorAll('.wiki-sb-link');
+  const tabs = {
+    constitution: document.getElementById('wikitab-constitution'),
+    roles: document.getElementById('wikitab-roles'),
+    greenscore: document.getElementById('wikitab-greenscore'),
+    administration: document.getElementById('wikitab-administration'),
+    structures: document.getElementById('wikitab-structures'),
+    'structure-bank': document.getElementById('wikitab-structure-bank'),
+    'structure-church': document.getElementById('wikitab-structure-church'),
+    'structure-media': document.getElementById('wikitab-structure-media'),
+    events: document.getElementById('wikitab-events'),
+    lore: document.getElementById('wikitab-lore')
+  };
+  links.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const tab = link.dataset.wikitab;
+      if (!tab || !tabs[tab]) return;
+      links.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      Object.keys(tabs).forEach(key => {
+        tabs[key].style.display = key === tab ? 'block' : 'none';
+      });
+    });
+  });
+}
+initWikiTabs();
+
+showPage('home');
+window.addEventListener('hashchange', () => showPage(location.hash.replace('#', '') || 'home'));
+</script>
+</body>
+</html>
