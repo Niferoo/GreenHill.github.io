@@ -1,2 +1,20 @@
-# GreenHill.github.io
-🌿 Official website of GreenHill — a Minecraft city-state. Here you'll find the Constitution, GreenScore system, economy, guides for residents, project documentation, news, and everything you need to become part of the city.
+# 🌿 GreenHill Pages
+
+Официальный сайт города **GreenHill**.
+
+Проект содержит всю актуальную информацию о городе, его устройстве и инфраструктуре.
+
+## Возможности
+
+* 🏛️ Информация о городе и его истории
+* 📜 Конституция и внутренние правила
+* 🌿 Система GreenScore
+* 📰 Новости и объявления
+* 📚 Гайды для новых жителей
+* 🗺️ Карты и полезные материалы
+* 💼 Экономика и городские системы
+* 🔗 Ссылки на Discord и другие ресурсы проекта
+
+---
+
+> GreenHill — это город, где развитие сообщества, совместная работа и доверие ценятся выше всего.
