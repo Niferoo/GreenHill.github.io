@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="dark">
 <title>GreenHill — Minecraft City State</title>
+<link rel="icon" type="image/png" href="img/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -50,7 +51,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .mobile-drawer-sep{height:1px;background:var(--border);margin:16px 0;}
 .page-view{display:none;}
 .page-view.active{display:block;}
-.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 40px 140px;overflow:hidden;isolation:isolate;}
+.hero{position:relative;min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:90px 40px 126px;overflow:hidden;isolation:isolate;}
 .hero-beams{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
 .hero-beams::before{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:150vmax;height:150vmax;background:conic-gradient(from 0deg,transparent 0deg,rgba(56,212,106,0.04) 40deg,transparent 80deg,transparent 160deg,rgba(56,212,106,0.03) 200deg,transparent 240deg,transparent 310deg,rgba(56,212,106,0.025) 345deg,transparent 360deg);animation:beams-spin 35s linear infinite;}
 .hero-orb{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);width:min(700px,110vw);height:min(700px,110vw);background:radial-gradient(circle at 50% 50%,rgba(56,212,106,0.15) 0%,rgba(56,212,106,0.05) 40%,transparent 70%);border-radius:50%;animation:orb-breathe 8s ease-in-out infinite;pointer-events:none;}
@@ -260,12 +261,21 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:2r
 @keyframes logo-pulse{0%,100%{box-shadow:0 0 0 1px rgba(56,212,106,0.3),0 0 60px rgba(56,212,106,0.25),0 20px 50px rgba(0,0,0,0.6)}50%{box-shadow:0 0 0 1px rgba(56,212,106,0.5),0 0 90px rgba(56,212,106,0.4),0 20px 50px rgba(0,0,0,0.6)}}
 @keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
 @keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-35px,40px)}}
-.wiki-sb-link.active{color:var(--accent)!important;border-left:2px solid var(--accent);background:rgba(56,212,106,0.04);}
-.wiki-sb-link:hover{color:var(--white)!important;}
+.wiki-sb-link{display:block;padding:6px 14px;color:var(--gray);text-decoration:none;font-size:13px;border:1px solid var(--border);border-radius:var(--radius);transition:all .12s;cursor:pointer;white-space:nowrap}
+.wiki-sb-link:hover{color:var(--white);border-color:var(--border-accent)}
+.wiki-sb-link.active{color:var(--accent);border-color:var(--accent);background:rgba(56,212,106,0.04)}
+.wiki-sidebar{border-bottom:1px solid var(--border);background:var(--panel);margin-bottom:24px;padding:10px 0}
+.wiki-sidebar-header{font-family:"JetBrains Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gray-dim);display:none}
+.wiki-sidebar ul{list-style:none;display:flex;flex-wrap:nowrap;gap:4px;margin:0;padding:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.wiki-sidebar ul::-webkit-scrollbar{display:none}
+.wiki-sb-link{flex-shrink:0}
+.wiki-content{padding:0;min-width:0}
+.wiki-layout{position:relative}
+.wiki-wrap{max-width:1200px;margin:0 auto;padding:0 48px}
 @media(max-width:768px){
 nav{padding:0 16px;}.nav-links,.nav-discord{display:none;}.burger{display:flex;}.mobile-drawer{display:flex;}
 section{padding:60px 16px;}.sep{padding:0 16px;}
-.hero{padding:100px 16px 120px;}.hero-logo{width:76px;height:76px;border-radius:16px;font-size:34px;}
+.hero{padding:90px 16px 108px;}.hero-logo{width:76px;height:76px;border-radius:16px;font-size:34px;}
 .hero-title{font-size:clamp(52px,14vw,90px);}
 .hero-stats{flex-direction:column;gap:1px;width:100%;max-width:280px;}.stat:first-child{border-radius:var(--radius) var(--radius) 0 0;border-right:1px solid var(--border);border-bottom:none;}.stat:last-child{border-radius:0 0 var(--radius) var(--radius);}
 .hero-cta{flex-direction:column;align-items:stretch;width:100%;max-width:280px;}.btn{justify-content:center;}
@@ -276,6 +286,7 @@ footer{flex-direction:column;align-items:flex-start;gap:14px;padding:1.5rem 1rem
 .status-bar{padding:5px 16px;gap:12px;}
 .section-index{font-size:48px;}.section-title{font-size:26px;}
 .rm-page{padding:2rem 1rem 4rem;}.rm-stats-row{flex-direction:column;gap:1px;}
+.hero-title{font-size:clamp(40px,11vw,70px)}.hero-tag{flex-wrap:wrap;justify-content:center}.hero-tag::before,.hero-tag::after{display:none}.hero-desc{padding:0 20px}.wiki-wrap{padding:0 12px}.wiki-content{padding:0}.wiki-sidebar{padding:6px 0;margin-bottom:18px}.wiki-sidebar ul{gap:3px}.wiki-sb-link{font-size:12px;padding:5px 10px}
 }
 @media(max-width:480px){.hero-meta{flex-direction:column;gap:6px;align-items:center;}}
 </style>
@@ -527,24 +538,25 @@ footer{flex-direction:column;align-items:flex-start;gap:14px;padding:1.5rem 1rem
 </div>
 
 <div id="page-wiki" class="page-view" style="padding-top:var(--nav-h);">
-<div class="wiki-wrap" style="max-width:1200px;margin:0 auto;padding:0 48px;">
-<div class="wiki-layout" style="display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - var(--nav-h));">
-<aside class="wiki-sidebar" style="border-right:1px solid var(--border);padding:24px 0;position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));overflow-y:auto;">
-  <div style="font-family:JetBrains Mono,monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--gray-dim);padding:6px 20px 10px;">ВИКИ GREENHILL</div>
-  <ul style="list-style:none;display:flex;flex-direction:column;">
-    <li><a class="wiki-sb-link active" data-wikitab="constitution" style="display:block;padding:8px 20px;color:var(--gray);text-decoration:none;font-size:14px;transition:all .12s;cursor:pointer;position:relative;">📜 Конституция</a></li>
-    <li><a class="wiki-sb-link" data-wikitab="roles" style="display:block;padding:8px 20px;color:var(--gray);text-decoration:none;font-size:14px;transition:all .12s;cursor:pointer;position:relative;">🏷️ Роли</a></li>
-    <li><a class="wiki-sb-link" data-wikitab="greenscore" style="display:block;padding:8px 20px;color:var(--gray);text-decoration:none;font-size:14px;transition:all .12s;cursor:pointer;position:relative;">🌿 GreenScore</a></li>
-    <li><a class="wiki-sb-link" data-wikitab="administration" style="display:block;padding:8px 20px;color:var(--gray);text-decoration:none;font-size:14px;transition:all .12s;cursor:pointer;position:relative;">🏛 Администрация</a></li>
-    <li><a class="wiki-sb-link" data-wikitab="structures" style="display:block;padding:8px 20px;color:var(--gray);text-decoration:none;font-size:14px;transition:all .12s;cursor:pointer;position:relative;">⚙️ Структуры</a></li>
-    <li><a class="wiki-sb-link" data-wikitab="structure-bank" style="display:block;padding:6px 20px 6px 36px;color:var(--gray-dim);text-decoration:none;font-size:13px;transition:all .12s;cursor:pointer;position:relative;">🏦 Банк</a></li>
-    <li><a class="wiki-sb-link" data-wikitab="structure-church" style="display:block;padding:6px 20px 6px 36px;color:var(--gray-dim);text-decoration:none;font-size:13px;transition:all .12s;cursor:pointer;position:relative;">⛪ Церковь</a></li>
-    <li><a class="wiki-sb-link" data-wikitab="structure-media" style="display:block;padding:6px 20px 6px 36px;color:var(--gray-dim);text-decoration:none;font-size:13px;transition:all .12s;cursor:pointer;position:relative;">📰 СМИ</a></li>
-    <li><a class="wiki-sb-link" data-wikitab="events" style="display:block;padding:8px 20px;color:var(--gray);text-decoration:none;font-size:14px;transition:all .12s;cursor:pointer;position:relative;">🎪 Ивенты</a></li>
-    <li><a class="wiki-sb-link" data-wikitab="lore" style="display:block;padding:8px 20px;color:var(--gray);text-decoration:none;font-size:14px;transition:all .12s;cursor:pointer;position:relative;">⛪ Лор</a></li>
+<div class="wiki-wrap">
+<div class="wiki-layout">
+<aside class="wiki-sidebar">
+  <div class="wiki-sidebar-header">ВИКИ GREENHILL</div>
+  <ul>
+    <li><a class="wiki-sb-link active" data-wikitab="constitution">📜 Конституция</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="roles">🏷️ Роли</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="jobs">🔧 Работы</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="greenscore">🌿 GreenScore</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="administration">🏛 Администрация</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="structures">⚙️ Структуры</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="structure-bank">🏦 Банк</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="structure-church">⛪ Церковь</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="structure-media">📰 СМИ</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="events">🎪 Ивенты</a></li>
+    <li><a class="wiki-sb-link" data-wikitab="lore">⛪ Лор</a></li>
   </ul>
 </aside>
-<main class="wiki-content" style="padding:36px 48px;min-width:0;">
+<main class="wiki-content">
   <div class="wiki-tab" id="wikitab-constitution" style="display:block;">
     <div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--gray-dim);margin-bottom:20px;display:flex;align-items:center;gap:5px;letter-spacing:0.05em;"><a data-page="home" style="color:var(--gray-dim);text-decoration:none;cursor:pointer;">GreenHill</a> › <span style="color:var(--gray);">Конституция</span></div>
     <div class="wiki-text">
@@ -654,6 +666,30 @@ footer{flex-direction:column;align-items:flex-start;gap:14px;padding:1.5rem 1rem
       </div>
     </div>
 
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin:28px 0 14px;letter-spacing:0.04em;">👥 Министры</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #4db6ac;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#4db6ac;">🏗 Building Council</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Отвечает за развитие города, утверждение строительства, архитектурный стиль и контроль крупных строительных проектов.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #4db6ac;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#4db6ac;">📰 Media Council</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Занимается новостями города, рекламой, организацией мероприятий, оформлением анонсов и развитием медиа GreenHill.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #4db6ac;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#4db6ac;">🌾 Farm Council</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Курирует городские фермы, производство ресурсов, автоматизацию и эффективность работы инфраструктуры.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #4db6ac;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#4db6ac;">🤝 Relations Council</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Представляет GreenHill во внешних отношениях, ведёт переговоры с другими городами, заключает союзы и торговые соглашения.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #4db6ac;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#4db6ac;">🏡 Community Council</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Отвечает за внутреннюю жизнь города: работу с жителями, принятие новых граждан, решение конфликтов и развитие сообщества.</div>
+      </div>
+    </div>
+
     <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin:28px 0 14px;letter-spacing:0.04em;">🎭 Дополнительные роли</h2>
     <div style="display:flex;flex-direction:column;gap:10px;">
       <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #2f0d49;border-radius:var(--radius);padding:14px 18px;">
@@ -671,6 +707,51 @@ footer{flex-direction:column;align-items:flex-start;gap:14px;padding:1.5rem 1rem
       <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #930000;border-radius:var(--radius);padding:14px 18px;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#930000;">@muted</span><span style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--gray-dim);">930000</span></div>
         <div style="font-size:13px;color:var(--gray);line-height:1.65;">Нарушитель / временно забанен. Ограничен в правах до решения администрации.</div>
+      </div>
+    </div>
+  </div>
+  <div class="wiki-tab" id="wikitab-jobs" style="display:none;">
+    <div style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--gray-dim);margin-bottom:20px;display:flex;align-items:center;gap:5px;letter-spacing:0.05em;"><a data-page="home" style="color:var(--gray-dim);text-decoration:none;cursor:pointer;">GreenHill</a> › <span style="color:var(--gray);">Работы</span></div>
+    <h1 style="font-family:Orbitron,sans-serif;font-size:26px;font-weight:700;color:var(--white);padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:24px;text-transform:uppercase;letter-spacing:0.04em;">🔧 Работы и должности</h1>
+    <p style="color:var(--gray);margin-bottom:24px;font-size:15px;line-height:1.75;">В GreenHill каждый житель может занять одну из рабочих должностей, которые не пересекаются с основной иерархией и дают конкретные обязанности и привилегии.</p>
+
+    <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;margin-bottom:28px;">
+      <p style="color:var(--gray-dim);font-size:13px;line-height:1.7;font-style:italic;">🎭 РП-должности — параллельные роли, не входящие в основную иерархию города. Житель может занимать РП-должность независимо от своего основного статуса.</p>
+    </div>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:14px;letter-spacing:0.04em;">🎭 РП-должности</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:32px;">
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:var(--gold);">Заведующий магазином</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Управляет городским магазином: контролирует ассортимент и ценообразование, ведёт учёт товаров, взаимодействует с поставщиками и отчитывается перед администрацией.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:var(--gold);">Главный редактор</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Руководит городскими СМИ: отвечает за выпуск новостей, редактирует материалы, координирует журналистов и контролирует качество контента.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:var(--gold);">Банкир</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Управляет банковской системой города: выдаёт кредиты, принимает вклады, следит за финансовыми потоками и ведёт учёт транзакций жителей.</div>
+      </div>
+    </div>
+
+    <h2 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:600;color:var(--white);margin-bottom:14px;letter-spacing:0.04em;">🔧 Рабочие должности</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:32px;">
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #4fc3f7;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#4fc3f7;">Architect</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Разрабатывает генеральные планы застроек, создаёт проекты зданий и инфраструктуры, контролирует соответствие построек архитектурному стилю города.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #aed581;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#aed581;">Gatherer</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Обеспечивает город ресурсами: добывает руды и материалы, собирает урожай с общественных ферм, пополняет городские склады и поддерживает запасы в норме.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #ffb74d;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#ffb74d;">Builder</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Отвечает за возведение и реконструкцию городских построек: занимается перестройкой и модернизацией жилых и общественных зданий, улучшает инфраструктуру города.</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-left:3px solid #ef5350;border-radius:var(--radius);padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;"><span style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:600;color:#ef5350;">Defender</span></div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.65;">Охраняет территорию города и его жителей, патрулирует границы, участвует в оборонительных операциях, проводит тренировки по боевой подготовке.</div>
       </div>
     </div>
   </div>
@@ -1191,7 +1272,7 @@ function initGalleries() {
     imgs.forEach((img, i) => {
       img.addEventListener('click', e => {
         e.stopPropagation();
-        openModal(imgs, i, tagText, titleText, descText);
+        if (window.innerWidth > 768) openModal(imgs, i, tagText, titleText, descText);
       });
     });
 
@@ -1223,11 +1304,23 @@ function initGalleries() {
 }
 initGalleries();
 
+function initWikiToggle() {
+  const btn = document.getElementById('wiki-toggle-btn');
+  const sidebar = document.querySelector('.wiki-sidebar');
+  const backdrop = document.getElementById('wiki-sidebar-backdrop');
+  if (!btn||!sidebar) return;
+  function open() { sidebar.classList.add('open');if (backdrop) backdrop.classList.add('open'); }
+  function close() { sidebar.classList.remove('open');if (backdrop) backdrop.classList.remove('open'); }
+  btn.addEventListener('click', e => { e.stopPropagation(); sidebar.classList.contains('open') ? close() : open(); });
+  if (backdrop) backdrop.addEventListener('click', close);
+  document.querySelectorAll('.wiki-sb-link').forEach(link => link.addEventListener('click', () => { if (window.innerWidth<=768) close(); }));
+}
 function initWikiTabs() {
   const links = document.querySelectorAll('.wiki-sb-link');
   const tabs = {
     constitution: document.getElementById('wikitab-constitution'),
     roles: document.getElementById('wikitab-roles'),
+    jobs: document.getElementById('wikitab-jobs'),
     greenscore: document.getElementById('wikitab-greenscore'),
     administration: document.getElementById('wikitab-administration'),
     structures: document.getElementById('wikitab-structures'),
@@ -1250,7 +1343,7 @@ function initWikiTabs() {
     });
   });
 }
-initWikiTabs();
+initWikiToggle();initWikiTabs();
 
 showPage('home');
 window.addEventListener('hashchange', () => showPage(location.hash.replace('#', '') || 'home'));
